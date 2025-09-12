@@ -8,10 +8,12 @@ import Songs from "./pages/Songs.jsx"
 import Song from "./pages/Song.jsx"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+// define as rotas do nosso app
 const App = () => {
   return (
     <>
       <BrowserRouter>
+      {/* sempre envia o header */}
         <Header />
 
         <Routes>

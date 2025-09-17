@@ -1,0 +1,28 @@
+src/
+│
+├── components/
+│   └── Header.jsx
+│
+├── pages/
+│   ├── Home.jsx
+│   ├── NotFound.jsx
+│
+│   ├── actor/
+│   │   ├── ActorList.jsx
+│   │   ├── ActorForm.jsx
+│   │   └── ActorDetail.jsx (opcional)
+│
+│   ├── class/
+│   │   ├── ClassList.jsx
+│   │   ├── ClassForm.jsx
+│   │   └── ClassDetail.jsx (opcional)
+│
+│   ├── director/
+│       ├── DirectorList.jsx
+│       ├── DirectorForm.jsx
+│       └── DirectorDetail.jsx (opcional)
+│
+├── routes/
+│   └── AppRoutes.jsx
+│
+└── App.jsx

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import Player from "../components/Player";
+import Player from "../../components/Player";
 import { Link, useParams } from "react-router-dom";
 import React from "react";
 import {
@@ -8,7 +8,7 @@ import {
   getSongById,
   getSongsArrayFromArtist,
   getRamdomIdFromArtist,
-} from "../js/utils";
+} from "../../js/utils";
 
 const Song = () => {
   const { id } = useParams();

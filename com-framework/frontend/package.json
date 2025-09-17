@@ -5,6 +5,7 @@
   "author": "LUIS DAS ARTIMANHAS & LUCAS GARCIA",
   "contact": "luisaugustodesouza785@gmail.com",
   "type": "module",
+  "main": "main.jsx",
   "scripts": {
     "dev": "set NO_COLOR=1 && npm run auto-install && vite",
     "build": "npm run update && vite build",

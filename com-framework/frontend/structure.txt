@@ -1,37 +1,44 @@
-src/
-│
-├── service/
-|   ├── serviceWorkerCache.js
-│   └── api.js
-│
-├── assets/
-│   ├── database
-│       └── localDatabase.js
-|   └── logos
-│
-├── components/
-│   └── Header.jsx
-│
-├── pages/
-│   ├── Home.jsx
-│   ├── NotFound.jsx
-│
-│   ├── actor/
-│   │   ├── ActorList.jsx
-│   │   ├── ActorForm.jsx
-│   │   └── ActorDetail.jsx (opcional)
-│
-│   ├── class/
-│   │   ├── ClassList.jsx
-│   │   ├── ClassForm.jsx
-│   │   └── ClassDetail.jsx (opcional)
-│
-│   ├── director/
-│       ├── DirectorList.jsx
-│       ├── DirectorForm.jsx
-│       └── DirectorDetail.jsx (opcional)
-│
-├── routes/
-│   └── AppRoutes.jsx
-│
-└── App.jsx
+main.jsx
+└──src/
+    │
+    ├── service/
+    |   ├── serviceWorkerCache.js
+    │   └── api.js
+    │
+    ├── assets/
+    │   ├── database
+    │       └── localDatabase.js
+    |   └── logos
+    │
+    ├── components/
+    │   └── Header.jsx
+    |
+    ├── css/
+    |   └── videoLocadora.css
+    ├── js/
+    |
+    ├── pages/
+    │   ├── Home.jsx
+    │   ├── NotFound.jsx
+    │
+    │   ├── actor/
+    │   │   ├── ActorList.jsx
+    │   │   ├── ActorForm.jsx
+    │   │   └── ActorDetail.jsx (opcional)
+    │
+    │   ├── class/
+    │   │   ├── ClassList.jsx
+    │   │   ├── ClassForm.jsx
+    │   │   └── ClassDetail.jsx (opcional)
+    │
+    │   ├── director/
+    │       ├── DirectorList.jsx
+    │       ├── DirectorForm.jsx
+    │       └── DirectorDetail.jsx (opcional)
+    │
+    ├── routes/
+    │   └── AppRoutes.jsx
+    |
+    ├── global.css
+    ├── adminSystem.jsx
+    └── videoLocadora.jsx

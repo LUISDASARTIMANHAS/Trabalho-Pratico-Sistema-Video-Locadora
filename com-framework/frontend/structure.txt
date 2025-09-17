@@ -1,5 +1,14 @@
 src/
 │
+├── service/
+|   ├── serviceWorkerCache.js
+│   └── api.js
+│
+├── assets/
+│   ├── database
+│       └── localDatabase.js
+|   └── logos
+│
 ├── components/
 │   └── Header.jsx
 │

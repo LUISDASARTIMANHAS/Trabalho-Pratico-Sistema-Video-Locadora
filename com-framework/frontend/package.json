@@ -17,7 +17,7 @@
     "auto-install":" npm install && node -v && npm run prepare-env"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "dependencies": {
     "@eslint/js": "^9.35.0",

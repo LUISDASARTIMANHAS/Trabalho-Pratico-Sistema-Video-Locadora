@@ -45,4 +45,4 @@ async function telemetria(error) {
     });
 }
 
-export { artistArray, songsArray };
+export { artistArray, songsArray,atoresArray };

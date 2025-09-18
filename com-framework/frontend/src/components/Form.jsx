@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const Form = ({ fields, onSubmit }) => {
-  const [values, setValues] = useState(
-    fields.reduce((acc, field) => ({ ...acc, [field.name]: "" }), {})
-  );
+const Form = ({ fields, onSubmit, initialValues = {} }) => {
+  const [values, setValues] = useState({});
+
+  useEffect(() => {
+    setValues(initialValues);
+  }, [initialValues]);
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -23,13 +25,14 @@ const Form = ({ fields, onSubmit }) => {
             id={field.name}
             name={field.name}
             type={field.type || "text"}
-            value={values[field.name]}
+            value={values[field.name] || ""}
             onChange={handleChange}
+            placeholder={field.placeholder}
+            required={field.required}
           />
         </div>
       ))}
-
-      <button type="submit">Enviar</button>
+      <button type="submit">Salvar</button>
     </form>
   );
 };

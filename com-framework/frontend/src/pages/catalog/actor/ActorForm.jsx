@@ -1,41 +1,53 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Form from "../../../components/Form.jsx"; // importando o componente dinâmico que criamos
 
 const ActorForm = () => {
-	const { id } = useParams();
-	const isEditing = Boolean(id);
+  const { id } = useParams();
+  const isEditing = Boolean(id);
 
-	const [nome, setNome] = useState("");
+  const [initialValues, setInitialValues] = useState({ nome: "" });
 
-	useEffect(() => {
-		if (isEditing) {
-			// Carrega dados do ator com ID
-			// setNome(ator.nome)
-		}
-	}, [id]);
+  useEffect(() => {
+    if (isEditing) {
+      // Aqui você buscaria os dados do ator pelo ID
+      // Exemplo simulado:
+      const ator = { nome: "Leonardo DiCaprio" };
+      setInitialValues(ator);
+    }
+  }, [id, isEditing]);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		if (isEditing) {
-			// Atualiza ator
-		} else {
-			// Cadastra novo ator
-		}
-	};
+  const handleFormSubmit = (data) => {
+    if (isEditing) {
+      console.log("Atualizando ator:", data);
+      // Chamada API para atualizar ator
+    } else {
+      console.log("Cadastrando novo ator:", data);
+      // Chamada API para criar ator
+    }
+  };
 
-	return (
-		<form onSubmit={handleSubmit}>
-			<h2>{isEditing ? "Editar Ator" : "Cadastrar Novo Ator"}</h2>
-			<input
-				type="text"
-				value={nome}
-				onChange={(e) => setNome(e.target.value)}
-				placeholder="Nome do ator"
-				required
-			/>
-			<button type="submit">Salvar</button>
-		</form>
-	);
+  // Configuração de campos do formulário
+  const fields = [
+    {
+      name: "nome",
+      label: "Nome do Ator",
+      type: "text",
+      placeholder: "Nome do ator",
+      required: true,
+    },
+  ];
+
+  return (
+    <div>
+      <h2>{isEditing ? "Editar Ator" : "Cadastrar Novo Ator"}</h2>
+      <Form
+        fields={fields}
+        onSubmit={handleFormSubmit}
+        initialValues={initialValues}
+      />
+    </div>
+  );
 };
 
 export default ActorForm;

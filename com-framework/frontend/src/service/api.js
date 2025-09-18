@@ -1,13 +1,16 @@
 import axios from "axios";
 const { VITE_ENV } = import.meta.env; // não process.env
 const url = VITE_ENV === "development" ? "http://localhost:3001/api" : "/api";
+let atoresArray = [];
 let artistArray = [];
 let songsArray = [];
 
 try {
   // const { NODE_ENV } = process.env;
+  const resAtores = await get(`${url}/atores`);
   const resArtists = await get(`${url}/artists`);
   const resSongs = await get(`${url}/songs`);
+  atoresArray = resAtores;
   artistArray = resArtists;
   songsArray = resSongs;
 } catch (error) {

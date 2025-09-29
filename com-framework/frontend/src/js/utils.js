@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
-import { artistArray } from "../assets/database/atores2";
-import { songsArray } from "../assets/database/songs";
+// import { artistArray } from "../assets/database/atores2";
+// import { songsArray } from "../assets/database/songs";
 import axios from "axios";
+import modules from "../js/config/modules.js";
 import { UNSAFE_getPatchRoutesOnNavigationFunction } from "react-router-dom";
 
 function getSongsArrayFromArtist(artist) {
@@ -10,13 +11,17 @@ function getSongsArrayFromArtist(artist) {
 }
 
 function getSongById(id) {
-  const song = songsArray.filter((currSongObj) => currSongObj._id === Number(id))[0];
+  const song = songsArray.filter(
+    (currSongObj) => currSongObj._id === Number(id)
+  )[0];
   return song;
 }
 
 // get artists
 function getArtistById(id) {
-  const artist = artistArray.filter((currArtistObj) => currArtistObj._id === Number(id))[0];
+  const artist = artistArray.filter(
+    (currArtistObj) => currArtistObj._id === Number(id)
+  )[0];
   return artist;
 }
 
@@ -62,20 +67,25 @@ function formatTimeInSeconds(timeString) {
   return seconds + minutes * 60;
 }
 
-function getAudioProgress(currentTimeInSeconds,durationInSeconds){
-  const progress = (currentTimeInSeconds/durationInSeconds)
-  return `${progress * 100}%`
+function getAudioProgress(currentTimeInSeconds, durationInSeconds) {
+  const progress = currentTimeInSeconds / durationInSeconds;
+  return `${progress * 100}%`;
 }
 
-async function onErrorTelemetria(error){
+async function onErrorTelemetria(error) {
   console.error("Erro ao detectado: ", error);
-	await axios.post(`${url}/telemetria`, "Erro ao detectado: " + error)
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.error(error);
-  });
+  await axios
+    .post(`${url}/telemetria`, "Erro ao detectado: " + error)
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+}
+
+function findModuleConfig(moduleName) {
+  return modules.find((mod) => mod.name == moduleName);
 }
 
 export {
@@ -90,5 +100,6 @@ export {
   getSongsArrayFromArtist,
   getSongById,
   getRamdomIdFromArtist,
-  onErrorTelemetria
+  onErrorTelemetria,
+  findModuleConfig,
 };

@@ -1,13 +1,15 @@
 // src/pages/ListPage.jsx
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import modules from "../js/config/modules.js";
 import DynamicTable from "../components/DynamicTable";
+import { findModuleConfig } from "../js/utils.js";
 
 const ListPage = () => {
-  const { moduleName } = useParams();
-
-  const moduleConfig = modules.find(mod => mod.name === moduleName);
+  const params  = useParams();
+  const { moduleName } = params;
+  window.findModuleConfig = findModuleConfig; // debugging
+  console.log("Rendering ListPage for module:", params);
+  const moduleConfig = findModuleConfig(moduleName);
 
   if (!moduleConfig) return <h2>Módulo não encontrado: {moduleName}</h2>;
 

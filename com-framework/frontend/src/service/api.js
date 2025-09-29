@@ -5,7 +5,7 @@ const { VITE_ENV } = import.meta.env;
 const url = VITE_ENV === "development" ? "http://localhost:3001/api" : "/api";
 
 // 👇 Bancos que você quer carregar
-const bancos = ["atores", "artists", "classes", "diretores", "songs"];
+const bancos = ["atores", "classes", "diretores"];
 
 // 🗃 Data store
 const dataStore = {};

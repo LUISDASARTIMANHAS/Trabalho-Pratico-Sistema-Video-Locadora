@@ -7,6 +7,12 @@ if (!atoresArray || atoresArray.length === 0) {
     {
       _id: 1,
       name: "ator 1",
+      nacionalidade: "brasileiro",
+    },
+    {
+      _id: 2,
+      name: "ator 2",
+      nacionalidade: "americano",
     },
   ];
 }

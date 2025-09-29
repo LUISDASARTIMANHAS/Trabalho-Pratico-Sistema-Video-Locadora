@@ -5,14 +5,39 @@ import NotFound from "../pages/NotFound";
 import ListPage from "../pages/ListPage";
 import NewPage from "../pages/NewPage";
 import EditPage from "../pages/EditPage";
+import ModuleWrapper from "../components/ModuleWrapper";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/:moduleName" element={<ListPage />} />
-      <Route path="/:moduleName/novo" element={<NewPage />} />
-      <Route path="/:moduleName/editar" element={<EditPage />} />
+
+      {/* Cada rota que usa módulo dinâmico vai envolver o componente com o ModuleWrapper */}
+      <Route
+        path="/:moduleName"
+        element={
+          <ModuleWrapper>
+            <ListPage />
+          </ModuleWrapper>
+        }
+      />
+      <Route
+        path="/:moduleName/novo"
+        element={
+          <ModuleWrapper>
+            <NewPage />
+          </ModuleWrapper>
+        }
+      />
+      <Route
+        path="/:moduleName/editar"
+        element={
+          <ModuleWrapper>
+            <EditPage />
+          </ModuleWrapper>
+        }
+      />
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

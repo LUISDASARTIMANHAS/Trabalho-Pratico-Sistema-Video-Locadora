@@ -101,5 +101,5 @@ export {
   getSongById,
   getRamdomIdFromArtist,
   onErrorTelemetria,
-  findModuleConfig,
+  findModuleConfig
 };

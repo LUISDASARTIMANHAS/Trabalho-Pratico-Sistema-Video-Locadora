@@ -1,51 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Form from "../components/Form.jsx"; // importando o componente dinâmico que criamos
+import ConfirmModal from "../components/ConfirmModal.jsx";
 
-const NewPage = () => {
-	const { id } = useParams();
-	const isEditing = Boolean(id);
-
+const NewPage = ({ moduleConfig }) => {
+	const [showModal, setShowModal] = useState(false);
 	const [initialValues, setInitialValues] = useState({ nome: "" });
 
-	useEffect(() => {
-		if (isEditing) {
-			// Aqui você buscaria os dados do ator pelo ID
-			// Exemplo simulado:
-			const ator = { nome: "Leonardo DiCaprio" };
-			setInitialValues(ator);
-		}
-	}, [id, isEditing]);
-
 	const handleFormSubmit = (data) => {
-		if (isEditing) {
-			console.log("Atualizando ator:", data);
-			// Chamada API para atualizar ator
-		} else {
-			console.log("Cadastrando novo ator:", data);
-			// Chamada API para criar ator
-		}
+		setShowModal(true);
 	};
-
-	// Configuração de campos do formulário
-	const fields = [
-		{
-			name: "nome",
-			label: "Nome do Ator",
-			type: "text",
-			placeholder: "Nome do ator",
-			required: true,
-		},
-	];
 
 	return (
 		<div>
-			<h2>{isEditing ? "Editar Ator" : "Cadastrar Novo Ator"}</h2>
+			<h2>Inserir novos {moduleConfig.label}</h2>
+			<Link
+				to={`/${moduleConfig.name}/novo`}
+				style={{ display: "inline-block", marginBottom: "20px" }}
+			>
+				+ Editar {moduleConfig.label}
+			</Link>
 			<Form
-				fields={fields}
+				btnTextContent="Inserir"
+				fields={moduleConfig.fields}
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
 			/>
+
+			<ConfirmModal
+        show={showModal}
+        title="Confirmação"
+        message="Deseja realmente Inserir?"
+        onConfirm={() => {
+          console.log("Item salvo!");
+          setShowModal(false);
+        }}
+        onCancel={() => setShowModal(false)}
+      />
 		</div>
 	);
 };

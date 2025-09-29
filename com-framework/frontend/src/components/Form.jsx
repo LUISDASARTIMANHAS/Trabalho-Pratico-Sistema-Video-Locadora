@@ -1,8 +1,26 @@
 // src/components/Form.jsx
 import React, { useState, useEffect } from "react";
 
-const Form = ({ fields, onSubmit, initialValues = {} }) => {
+const Form = ({ btnTextContent = "Salvar",fields = [], onSubmit, initialValues = {} }) => {
   const [values, setValues] = useState({});
+  console.log("[FORM] Rendering Form with fields:", fields);
+  console.log("[FORM] Initial values:", initialValues);
+
+  // Processa fields, ignora "id"
+  const processedFields = fields
+    .filter((field) => field !== "id") // ❌ ignora "id"
+    .map((field) => {
+      if (typeof field === "string") {
+        return {
+          name: field,
+          label: field
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (l) => l.toUpperCase()),
+          type: "text",
+        };
+      }
+      return field; // já é objeto
+    });
 
   useEffect(() => {
     setValues(initialValues);
@@ -19,7 +37,7 @@ const Form = ({ fields, onSubmit, initialValues = {} }) => {
 
   return (
     <form onSubmit={handleSubmit} className="p-3 border rounded bg-light">
-      {fields.map((field) => (
+      {processedFields.map((field) => (
         <div className="mb-3" key={field.name}>
           <label htmlFor={field.name} className="form-label">
             {field.label}
@@ -31,13 +49,13 @@ const Form = ({ fields, onSubmit, initialValues = {} }) => {
             className="form-control"
             value={values[field.name] || ""}
             onChange={handleChange}
-            placeholder={field.placeholder}
-            required={field.required}
+            placeholder={field.placeholder || ""}
+            required={field.required || false}
           />
         </div>
       ))}
       <button type="submit" className="btn btn-primary">
-        Salvar
+        {btnTextContent}
       </button>
     </form>
   );

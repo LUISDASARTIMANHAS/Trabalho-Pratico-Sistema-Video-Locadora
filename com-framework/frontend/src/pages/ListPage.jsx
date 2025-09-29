@@ -12,13 +12,12 @@ const ListPage = ({ moduleConfig }) => {
         to={`/${moduleConfig.name}/novo`}
         style={{ display: "inline-block", marginBottom: "20px" }}
       >
-        + Novo {moduleConfig.label}
+        + Inserir novos {moduleConfig.label}
       </Link>
 
       <DynamicTable data={moduleConfig.data} />
     </div>
   );
 };
-
 
 export default ListPage;

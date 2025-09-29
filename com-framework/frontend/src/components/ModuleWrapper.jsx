@@ -34,6 +34,7 @@ const ModuleWrapper = ({ children }) => {
 			props.moduleConfig
 		sem precisar buscar novamente.
 	*/
+	console.log("ModuleWrapper: Renderizando módulo", moduleName, moduleConfig);
   return React.cloneElement(children, { moduleConfig });
 };
 

@@ -20,25 +20,10 @@ src/
 ├── pages/
 │   ├── Home.jsx               # Página inicial
 │   ├── NotFound.jsx          # Página 404
-│
 │   ├── auth/                  # Páginas de autenticação
 │       └── (login, signup etc. futuramente)
 │
-│   └── catalog/               # Domínio funcional de catálogo
-│       ├── actor/
-│       │   ├── ActorList.jsx
-│       │   ├── ActorForm.jsx
-│       │   └── ActorDetail.jsx (opcional)
-│       │
-│       ├── class/
-│       │   ├── ClassList.jsx
-│       │   ├── ClassForm.jsx
-│       │   └── ClassDetail.jsx (opcional)
-│       │
-│       └── director/
-│           ├── DirectorList.jsx
-│           ├── DirectorForm.jsx
-│           └── DirectorDetail.jsx (opcional)
+
 │
 ├── routes/
 │   └── AppRoutes.jsx          # Todas as rotas do sistema

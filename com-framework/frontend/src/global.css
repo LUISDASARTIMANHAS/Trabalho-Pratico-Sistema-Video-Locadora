@@ -70,3 +70,53 @@ aside {
 .read-the-docs {
   color: #888;
 }
+
+/* Tabela dinâmica - estilos padrão */
+.dynamic-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+.dynamic-table thead {
+  background-color: #f5f5f5;
+}
+
+.dynamic-table th,
+.dynamic-table td {
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.dynamic-table th {
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dynamic-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.dynamic-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.dynamic-table td {
+  color: #555;
+}
+
+/* Responsividade básica */
+@media (max-width: 768px) {
+  .dynamic-table {
+    font-size: 14px;
+  }
+
+  .dynamic-table th,
+  .dynamic-table td {
+    padding: 8px 10px;
+  }
+}

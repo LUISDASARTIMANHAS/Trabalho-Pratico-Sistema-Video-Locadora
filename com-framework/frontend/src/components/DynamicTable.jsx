@@ -9,30 +9,28 @@ const DynamicTable = ({ data, fields }) => {
   // Se fields não for passado, tenta descobrir os campos a partir do primeiro item
   const detectedFields = fields || Object.keys(data[0]);
 
-  return (
-    <table border="1" cellPadding="10">
-      <thead>
-        <tr>
+ return (
+  <table className="dynamic-table">
+    <thead>
+      <tr>
+        {detectedFields.map((field) => (
+          <th key={field}>
+            {field.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((item, idx) => (
+        <tr key={idx}>
           {detectedFields.map((field) => (
-            <th key={field}>
-              {field
-                .replace(/_/g, " ")
-                .replace(/\b\w/g, (l) => l.toUpperCase())}
-            </th>
+            <td key={field}>{item[field]}</td>
           ))}
         </tr>
-      </thead>
-      <tbody>
-        {data.map((item, idx) => (
-          <tr key={idx}>
-            {detectedFields.map((field) => (
-              <td key={field}>{item[field]}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+      ))}
+    </tbody>
+  </table>
+);
 };
 
 export default DynamicTable;

@@ -1,17 +1,14 @@
-// src/pages/ListPage.jsx
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import DynamicTable from "../components/DynamicTable";
 import { findModuleConfig } from "../js/utils.js";
 
 const ListPage = () => {
-  const params  = useParams();
-  const { moduleName } = params;
-  window.findModuleConfig = findModuleConfig; // debugging
-  console.log("Rendering ListPage for module:", params);
+  const { moduleName } = useParams();
   const moduleConfig = findModuleConfig(moduleName);
 
   if (!moduleConfig) return <h2>Módulo não encontrado: {moduleName}</h2>;
+  console.log("Rendering ListPage for module:", moduleConfig);
 
   return (
     <div>
@@ -23,7 +20,7 @@ const ListPage = () => {
         + Novo {moduleConfig.label}
       </Link>
 
-      <DynamicTable data={moduleConfig.data} fields={moduleConfig.fields} />
+      <DynamicTable data={moduleConfig.data} />
     </div>
   );
 };

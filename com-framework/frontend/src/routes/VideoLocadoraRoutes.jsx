@@ -12,7 +12,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/:moduleName" element={<ListPage />} />
       <Route path="/:moduleName/novo" element={<NewPage />} />
-      <Route path="/:moduleName/editar/:id" element={<EditPage />} />
+      <Route path="/:moduleName/editar" element={<EditPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

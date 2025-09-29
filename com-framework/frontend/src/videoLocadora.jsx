@@ -1,6 +1,6 @@
 // src/VideoLocadora.jsx
 import React, { useState, useEffect } from "react";
-
+import "./css/videoLocadora.css";
 import Header from "./components/Header.jsx";
 import AppRoutes from "./routes/VideoLocadoraRoutes.jsx";
 import { BrowserRouter } from "react-router-dom";
@@ -18,7 +18,7 @@ const VideoLocadora = () => {
     })();
   }, []);
 
-  if (!loaded) return <p>Carregando...</p>;
+  if (!loaded) return <p>Carregando Banco de dados...</p>;
 
   const asideLinks = [
     { path: "/", label: "Início" },

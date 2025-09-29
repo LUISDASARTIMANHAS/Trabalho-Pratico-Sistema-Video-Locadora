@@ -1,50 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import Form from "../components/Form.jsx"; // importando o componente dinâmico que criamos
+import React, { useState } from "react";
+import ConfirmModal from "../components/ConfirmModal.jsx";
 
 const EditPage = () => {
-	const { id } = useParams();
-	const isEditing = Boolean(id);
+	const [showModal, setShowModal] = useState(false);
 
-	const [initialValues, setInitialValues] = useState({ nome: "" });
-
-	useEffect(() => {
-		if (isEditing) {
-			// Aqui você buscaria os dados do ator pelo ID
-			// Exemplo simulado:
-			const ator = { nome: "Leonardo DiCaprio" };
-			setInitialValues(ator);
-		}
-	}, [id, isEditing]);
-
-	const handleFormSubmit = (data) => {
-		if (isEditing) {
-			console.log("Atualizando ator:", data);
-			// Chamada API para atualizar ator
-		} else {
-			console.log("Cadastrando novo ator:", data);
-			// Chamada API para criar ator
-		}
+	const handleSave = () => {
+		// chama o modal antes de salvar
+		setShowModal(true);
 	};
-
-	// Configuração de campos do formulário
-	const fields = [
-		{
-			name: "nome",
-			label: "Nome do Ator",
-			type: "text",
-			placeholder: "Nome do ator",
-			required: true,
-		},
-	];
 
 	return (
 		<div>
-			<h2>{isEditing ? "Editar Ator" : "Cadastrar Novo Ator"}</h2>
-			<Form
-				fields={fields}
-				onSubmit={handleFormSubmit}
-				initialValues={initialValues}
+			<h2>Editar Item</h2>
+			<button className="btn btn-success" onClick={handleSave}>
+				Salvar
+			</button>
+
+			<ConfirmModal
+				show={showModal}
+				title="Confirmação"
+				message="Deseja realmente salvar?"
+				onConfirm={() => {
+					console.log("Item salvo!");
+					setShowModal(false);
+				}}
+				onCancel={() => setShowModal(false)}
 			/>
 		</div>
 	);

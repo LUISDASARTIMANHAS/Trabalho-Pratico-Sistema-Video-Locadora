@@ -2,35 +2,33 @@
 import React from "react";
 
 const DynamicTable = ({ data, fields }) => {
-  console.log("DynamicTable received data:", data);
+  if (!data || data.length === 0)
+    return <p className="text-muted">Nenhum dado disponível.</p>;
 
-  if (!data || data.length === 0) return <p>Nenhum dado disponível.</p>;
-
-  // Se fields não for passado, tenta descobrir os campos a partir do primeiro item
   const detectedFields = fields || Object.keys(data[0]);
 
- return (
-  <table className="dynamic-table">
-    <thead>
-      <tr>
-        {detectedFields.map((field) => (
-          <th key={field}>
-            {field.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
-          </th>
-        ))}
-      </tr>
-    </thead>
-    <tbody>
-      {data.map((item, idx) => (
-        <tr key={idx}>
+  return (
+    <table className="table table-striped table-bordered table-hover">
+      <thead className="table-dark">
+        <tr>
           {detectedFields.map((field) => (
-            <td key={field}>{item[field]}</td>
+            <th key={field}>
+              {field.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+            </th>
           ))}
         </tr>
-      ))}
-    </tbody>
-  </table>
-);
+      </thead>
+      <tbody>
+        {data.map((item, idx) => (
+          <tr key={idx}>
+            {detectedFields.map((field) => (
+              <td key={field}>{item[field]}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 };
 
 export default DynamicTable;

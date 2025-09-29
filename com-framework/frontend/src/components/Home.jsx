@@ -1,13 +1,13 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
+// src/pages/Home.jsx
 import React from "react";
 
 const Home = () => {
   return (
-    <main className="home">
-      <h1>Bem-vindo à Vídeo Locadora!</h1>
-      <p>Explore nossa coleção de filmes e séries.</p>
-      {/* <Main /> */}
+    <main className="container mt-4">
+      <div className="text-center">
+        <h1 className="mb-3">🎬 Bem-vindo à Vídeo Locadora!</h1>
+        <p className="lead">Explore nossa coleção de filmes e séries.</p>
+      </div>
     </main>
   );
 };

@@ -21,9 +21,9 @@ src/
 │   ├── Home.jsx               # Página inicial
 │   ├── NotFound.jsx          # Página 404
 │   ├── auth/                  # Páginas de autenticação
-│       └── (login, signup etc. futuramente)
+│   │   └── (login, signup etc. futuramente)
+│   └── editpage.jsx
 │
-
 │
 ├── routes/
 │   └── AppRoutes.jsx          # Todas as rotas do sistema

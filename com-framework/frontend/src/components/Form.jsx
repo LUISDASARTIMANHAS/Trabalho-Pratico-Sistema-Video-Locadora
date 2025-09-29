@@ -1,3 +1,4 @@
+// src/components/Form.jsx
 import React, { useState, useEffect } from "react";
 
 const Form = ({ fields, onSubmit, initialValues = {} }) => {
@@ -17,14 +18,17 @@ const Form = ({ fields, onSubmit, initialValues = {} }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="p-3 border rounded bg-light">
       {fields.map((field) => (
-        <div key={field.name} style={{ marginBottom: "10px" }}>
-          <label htmlFor={field.name}>{field.label}</label>
+        <div className="mb-3" key={field.name}>
+          <label htmlFor={field.name} className="form-label">
+            {field.label}
+          </label>
           <input
             id={field.name}
             name={field.name}
             type={field.type || "text"}
+            className="form-control"
             value={values[field.name] || ""}
             onChange={handleChange}
             placeholder={field.placeholder}
@@ -32,7 +36,9 @@ const Form = ({ fields, onSubmit, initialValues = {} }) => {
           />
         </div>
       ))}
-      <button type="submit">Salvar</button>
+      <button type="submit" className="btn btn-primary">
+        Salvar
+      </button>
     </form>
   );
 };

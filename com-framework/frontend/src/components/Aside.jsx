@@ -1,15 +1,18 @@
+// src/components/Aside.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 
 const Aside = ({ links = [] }) => {
   return (
-    <aside>
-      <h2>Menu</h2>
+    <aside className="bg-light border rounded p-3">
+      <h4 className="mb-3">Menu</h4>
       <nav>
-        <ul>
+        <ul className="list-group">
           {links.map((link, index) => (
-            <li key={index}>
-              <Link to={link.path}>{link.label}</Link>
+            <li key={index} className="list-group-item">
+              <Link to={link.path} className="text-decoration-none">
+                {link.label}
+              </Link>
             </li>
           ))}
         </ul>

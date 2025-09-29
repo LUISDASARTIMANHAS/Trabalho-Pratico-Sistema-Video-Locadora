@@ -1,48 +1,65 @@
+// src/service/api.js
 import axios from "axios";
-const { VITE_ENV } = import.meta.env; // não process.env
+
+const { VITE_ENV } = import.meta.env;
 const url = VITE_ENV === "development" ? "http://localhost:3001/api" : "/api";
-let atoresArray = [];
-let artistArray = [];
-let songsArray = [];
 
-try {
-  // const { NODE_ENV } = process.env;
-  const resAtores = await get(`${url}/atores`);
-  const resArtists = await get(`${url}/artists`);
-  const resSongs = await get(`${url}/songs`);
-  atoresArray = resAtores;
-  artistArray = resArtists;
-  songsArray = resSongs;
-} catch (error) {
-  console.error("Erro ao buscar dados da API: ", error);
-}
+// 👇 Bancos que você quer carregar
+const bancos = ["atores", "artists", "classes", "diretores", "songs"];
 
-async function get(url) {
+// 🗃 Data store
+const dataStore = {};
+
+// Busca dados da API
+async function get(endpoint) {
   try {
-    const response = await axios.get(url, {
-      headers: { Accept: "application/json" }, // força o servidor a responder JSON
+    const response = await axios.get(`${url}/${endpoint}`, {
+      headers: { Accept: "application/json" },
     });
 
-    // se não tiver data ou não for objeto/array, considera erro
     if (typeof response.data !== "object") {
-      throw new Error(`Resposta não é JSON: ${response.data}`);
+      throw new Error(`Resposta inválida da API: ${response.data}`);
     }
 
     return response.data;
   } catch (error) {
-    telemetria(error.message);
+    await telemetria(error.message || error.toString());
+    return []; // ⚠️ retorna array vazio
   }
 }
 
+// Envia telemetria
 async function telemetria(error) {
-  await axios
-    .post(`${url}/telemetria`, "Erro ao buscar dados da API: " + error)
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.error(error);
+  try {
+    await axios.post(`${url}/telemetria`, {
+      mensagem: "Erro ao buscar dados da API",
+      erro: error,
+      timestamp: new Date().toISOString(),
     });
+  } catch (err) {
+    console.error("Erro ao enviar telemetria:", err.message);
+  }
 }
 
-export { artistArray, songsArray,atoresArray };
+// Inicializa os dados (lazy)
+for (const banco of bancos) {
+  const varName = `${banco}Array`;
+  dataStore[varName] = [];
+
+  // busca dados da API (sem await aqui)
+  get(banco).then((data) => {
+    dataStore[varName] = data;
+  });
+}
+
+export async function initData() {
+  await Promise.all(
+    bancos.map(async (banco) => {
+      const varName = `${banco}Array`;
+      const data = await get(banco);
+      dataStore[varName] = data;
+    })
+  );
+}
+
+export default dataStore;

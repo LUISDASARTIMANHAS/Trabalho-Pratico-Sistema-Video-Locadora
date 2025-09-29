@@ -1,15 +1,15 @@
-/* eslint-disable no-unused-vars */
 import React from "react";
-// import Main from "../components/Main.jsx"
+import { Link } from "react-router-dom";
+import "../css/NotFound.css"; // (opcional se quiser estilizar separado)
 
-const Home = () => {
+const NotFound = () => {
   return (
-    <main className="main">
-      <h1>Bem-vindo à Vídeo Locadora!</h1>
-      <p>Explore nossa coleção de filmes e séries.</p>
-      {/* <Main /> */}
+    <main className="main not-found">
+      <h1>404 - Página Não Encontrada</h1>
+      <p>A página que você tentou acessar não existe ou foi removida.</p>
+      <Link to="/" className="back-home">← Voltar para a página inicial</Link>
     </main>
   );
 };
 
-export default Home;
+export default NotFound;

@@ -1,13 +1,19 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import React from "react";
+import { Link } from "react-router-dom";
 
-const Aside = () => {
+const Aside = ({ links = [] }) => {
   return (
     <aside>
-      <h2>Aside</h2>
-      <p>Explore nossa coleção de filmes e séries.</p>
-      {/* <Main /> */}
+      <h2>Menu</h2>
+      <nav>
+        <ul>
+          {links.map((link, index) => (
+            <li key={index}>
+              <Link to={link.path}>{link.label}</Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </aside>
   );
 };

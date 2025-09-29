@@ -1,41 +1,26 @@
+// src/routes/VideoLocadoraRoutes.jsx
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Home from "../pages/Home.jsx";
-import NotFound from "../pages/NotFound.jsx";
-
-// Atores
-import ActorList from "../pages/catalog/actor/ActorList.jsx";
-import ActorForm from "../pages/catalog/actor/ActorForm.jsx";
-
-// // Classes
-// import ClassList from "../pages/class/ClassList.jsx";
-// import ClassForm from "../pages/class/ClassForm.jsx";
-
-// // Diretores
-// import DirectorList from "../pages/director/DirectorList.jsx";
-// import DirectorForm from "../pages/director/DirectorForm.jsx";
+import modules from "../js/config/modules.js";
+import Home from "../pages/Home";
+import NotFound from "../pages/NotFound";
+import ListPage from "../pages/ListPage";
+import NewPage from "../pages/NewPage";
+import EditPage from "../pages/EditPage";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
 
-      {/* Atores */}
-      <Route path="/atores" element={<ActorList />} />
-      <Route path="/atores/novo" element={<ActorForm />} />
-      <Route path="/atores/editar/:id" element={<ActorForm />} />
+      {modules.map(({ name, label }) => (
+        <React.Fragment key={name}>
+          <Route path={`/${name}`} element={<ListPage />} />
+          <Route path={`/${name}/novo`} element={<NewPage moduleName={name} />} />
+          <Route path={`/${name}/editar/:id`} element={<EditPage moduleName={name} />} />
+        </React.Fragment>
+      ))}
 
-      {/* Classes */}
-      {/* <Route path="/classes" element={<ClassList />} />
-      <Route path="/classes/nova" element={<ClassForm />} />
-      <Route path="/classes/editar/:id" element={<ClassForm />} /> */}
-
-      {/* Diretores */}
-      {/* <Route path="/diretores" element={<DirectorList />} />
-      <Route path="/diretores/novo" element={<DirectorForm />} />
-      <Route path="/diretores/editar/:id" element={<DirectorForm />} /> */}
-
-      {/* Página não encontrada */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -42,4 +42,16 @@ const ConfirmModal = ({ show, title, message, onConfirm, onCancel }) => {
   );
 };
 
+// example usage:
+// <ConfirmModal
+//         show={showModal}
+//         title="Confirmação"
+//         message="Deseja realmente salvar?"
+//         onConfirm={() => {
+//           console.log("Item salvo!");
+//           setShowModal(false);
+//         }}
+//         onCancel={() => setShowModal(false)}
+//       />
+
 export default ConfirmModal;

@@ -9,19 +9,19 @@ const modules = [
     name: "atores",
     label: "Atores",
     data: atoresArray,
-    fields: ["id", "nome", "nacionalidade"], // usado para a DynamicTable
+    newPageFields: ["id", "nome", "nacionalidade"], // usado para a criar novas paginas
   },
   {
     name: "classes",
     label: "Classes",
     data: classesArray,
-    fields: ["id", "descricao"],
+    newPageFields: ["id", "descricao"],
   },
   {
     name: "diretores",
     label: "Diretores",
     data: diretoresArray,
-    fields: ["id", "nome", "idade"],
+    newPageFields: ["id", "nome", "idade"],
   },
 ];
 

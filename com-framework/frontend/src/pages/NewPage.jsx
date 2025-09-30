@@ -22,7 +22,7 @@ const NewPage = ({ moduleConfig }) => {
 			</Link>
 			<Form
 				btnTextContent="Inserir"
-				fields={moduleConfig.fields}
+				fields={moduleConfig.newPageFields}
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
 			/>

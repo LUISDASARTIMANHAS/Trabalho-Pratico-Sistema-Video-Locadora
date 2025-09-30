@@ -15,7 +15,7 @@ import { findModuleConfig } from "../js/utils";
 	Isso permite que você não precise repetir if(!moduleConfig) e useParams() em todas as páginas
 */
 const ModuleWrapper = ({ children }) => {
-  const { moduleName } = useParams(); // Pega o parâmetro da URL
+  const { moduleName,id } = useParams(); // Pega o parâmetro da URL
   const moduleConfig = findModuleConfig(moduleName); // Busca configuração do módulo
 
   if (!moduleConfig) {
@@ -35,7 +35,7 @@ const ModuleWrapper = ({ children }) => {
 		sem precisar buscar novamente.
 	*/
 	console.log("ModuleWrapper: Renderizando módulo", moduleName, moduleConfig);
-  return React.cloneElement(children, { moduleConfig });
+  return React.cloneElement(children, { moduleConfig,id });
 };
 
 export default ModuleWrapper;

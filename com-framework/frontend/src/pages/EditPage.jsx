@@ -3,13 +3,13 @@ import ConfirmModal from "../components/ConfirmModal.jsx";
 import { Link } from "react-router-dom";
 import Form from "../components/Form.jsx";
 
-const EditPage = ({ moduleConfig }) => {
+const EditPage = ({ moduleConfig, id }) => {
   const [showModal, setShowModal] = useState(false);
   const [initialValues, setInitialValues] = useState({
   ...moduleConfig.data[0],        // pega todos os campos
   nome: moduleConfig.data[0].name // opcional, sobrescreve se quiser
 });
-
+  alert("ID do item a ser editado: " + id);
 
   const handleSave = () => {
     // chama o modal antes de salvar

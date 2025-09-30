@@ -30,7 +30,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/:moduleName/editar"
+        path="/:moduleName/editar/:id"
         element={
           <ModuleWrapper>
             <EditPage />

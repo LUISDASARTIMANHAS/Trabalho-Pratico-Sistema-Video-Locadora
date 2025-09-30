@@ -18,7 +18,7 @@ const NewPage = ({ moduleConfig }) => {
 				to={`/${moduleConfig.name}/novo`}
 				style={{ display: "inline-block", marginBottom: "20px" }}
 			>
-				+ Editar {moduleConfig.label}
+				+ Ver {moduleConfig.label}
 			</Link>
 			<Form
 				btnTextContent="Inserir"

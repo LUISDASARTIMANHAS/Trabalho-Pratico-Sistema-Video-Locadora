@@ -25,7 +25,6 @@ const VideoLocadora = () => {
     ...modules.flatMap(({ name, label }) => [
       { path: `/${name}`, label },
       { path: `/${name}/novo`, label: `Novo ${label}` },
-      { path: `/${name}/editar`, label: `Editar ${label}` },
     ]),
   ];
 

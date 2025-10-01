@@ -1,44 +1,59 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import Form from "../components/Form.jsx"; // importando o componente dinâmico que criamos
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import Form from "../components/Form.jsx";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import { create } from "../service/api.js";
 
 const NewPage = ({ moduleConfig }) => {
 	const [showModal, setShowModal] = useState(false);
-	const [initialValues, setInitialValues] = useState({ nome: "" });
+	const [initialValues, setInitialValues] = useState(
+		moduleConfig.data?.[0] || {}
+	);
+	const [formData, setFormData] = useState(null);
 
 	const handleFormSubmit = (data) => {
-		setShowModal(true);
+		console.log("[NewPage] Dados do form:", data);
+		setFormData(data); // salva os dados do form
+		setShowModal(true); // abre modal de confirmação
+	};
+
+	const handleConfirm = async () => {
+		try {
+			console.log("[NewPage] Criando item:", formData);
+			await create(moduleConfig.name, formData); // usa moduleConfig.name como endpoint
+			console.log("Item salvo com sucesso!");
+			setShowModal(false);
+		} catch (err) {
+			console.error("Erro ao salvar item:", err);
+			setShowModal(false);
+		}
 	};
 
 	return (
 		<div>
 			<h2>Inserir novos {moduleConfig.label}</h2>
+
 			<Link
 				to={`/${moduleConfig.name}`}
 				style={{ display: "inline-block", marginBottom: "20px" }}
 			>
 				+ Ver {moduleConfig.label}
 			</Link>
+
 			<Form
-				btnTextContent="Inserir"
-				exampleObject={moduleConfig.data[0]}
+				btnTextContent={`Inserir ${moduleConfig.label}`}
+				exampleObject={moduleConfig.data?.[0]}
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
 			/>
 
 			<ConfirmModal
-        show={showModal}
-        title="Confirmação"
-        message="Deseja realmente Inserir?"
-        onConfirm={() => {
-			// await create("atores", data);
-          console.log("Item salvo!");
-          setShowModal(false);
-        }}
-        onCancel={() => setShowModal(false)}
-      />
+				show={showModal}
+				title="Confirmação"
+				message={`Deseja realmente inserir este ${moduleConfig.label}?`}
+				onConfirm={handleConfirm}
+				onCancel={() => setShowModal(false)}
+			/>
 		</div>
 	);
 };

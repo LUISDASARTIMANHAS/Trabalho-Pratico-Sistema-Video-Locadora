@@ -1,53 +1,68 @@
+// src/components/Form.jsx
 import React, { useState, useEffect } from "react";
 
 const Form = ({
   btnTextContent = "Salvar",
-  fields = [],
+  fields = {}, // agora espera um objeto com valores de exemplo
   onSubmit,
   initialValues = {},
 }) => {
   const [values, setValues] = useState({});
   const [error, setError] = useState(null);
-  console.log("[FORM] Rendering Form with fields:", fields);
+
+  console.log("[FORM] Rendering Form with fields (objeto de exemplo):", fields);
   console.log("[FORM] Initial values:", initialValues);
 
+  // Gera automaticamente os campos com base no objeto "fields"
+  const processedFields = Object.entries(fields)
+    .filter(([key]) => key !== "id" && key !== "_id") // ignora id
+    .map(([key, value]) => {
+      let type = "text";
 
-  // ⚠️ Verifica se é um array de strings
-  const isValidArrayOfStrings =
-    Array.isArray(fields) && fields.every((f) => typeof f === "string");
+      if (typeof value === "number") {
+        type = "number";
+      } else if (typeof value === "boolean") {
+        type = "checkbox";
+      } else if (
+        typeof value === "string" &&
+        /^\d{2}\/\d{2}\/\d{4}$/.test(value)
+      ) {
+        // formato dd/mm/yyyy
+        type = "date";
+      }
+
+      return {
+        name: key,
+        label: key
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase()),
+        type,
+      };
+    });
 
   useEffect(() => {
-    if (!isValidArrayOfStrings) {
+    if (!fields || typeof fields !== "object" || Array.isArray(fields)) {
       console.error(
-        "[FORM] Erro: 'fields' deve ser um array de strings, como ['id', 'descricao']."
+        "[FORM] Erro: 'fields' deve ser um objeto exemplo, ex: { nome: 'abc', valor: 5 }"
       );
       setError(
-        "Erro: formato inválido de campos. Esperado um array de strings como ['id', 'descricao']."
+        "Erro: formato inválido de campos. Esperado um objeto exemplo, como { nome: 'abc', valor: 5 }."
       );
     } else {
       setError(null);
     }
   }, [fields]);
 
-  // Se for inválido, processedFields será vazio
-const processedFields = isValidArrayOfStrings
-  ? fields
-      .filter((field) => field !== "id" && field !== "_id") // Ignora 'id' e '_id'
-      .map((field) => ({
-        name: field,
-        label: field
-          .replace(/_/g, " ")
-          .replace(/\b\w/g, (l) => l.toUpperCase()),
-        type: "text",
-      }))
-  : [];
-
   useEffect(() => {
     setValues(initialValues);
   }, [initialValues]);
 
   const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
+    const { name, type, value, checked } = e.target;
+    setValues({
+      ...values,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSubmit = (e) => {
@@ -75,7 +90,12 @@ const processedFields = isValidArrayOfStrings
             name={field.name}
             type={field.type}
             className="form-control"
-            value={values[field.name] || ""}
+            value={
+              field.type === "checkbox"
+                ? undefined
+                : values[field.name] || fields[field.name] || ""
+            }
+            checked={field.type === "checkbox" ? values[field.name] || false : undefined}
             onChange={handleChange}
             required
           />

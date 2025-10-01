@@ -15,14 +15,14 @@ const NewPage = ({ moduleConfig }) => {
 		<div>
 			<h2>Inserir novos {moduleConfig.label}</h2>
 			<Link
-				to={`/${moduleConfig.name}/novo`}
+				to={`/${moduleConfig.name}`}
 				style={{ display: "inline-block", marginBottom: "20px" }}
 			>
 				+ Ver {moduleConfig.label}
 			</Link>
 			<Form
 				btnTextContent="Inserir"
-				fields={moduleConfig.newPageFields}
+				fields={moduleConfig.data[0]}
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
 			/>

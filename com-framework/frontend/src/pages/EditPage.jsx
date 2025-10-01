@@ -30,7 +30,7 @@ const EditPage = ({ moduleConfig, id }) => {
 
       <Form
         btnTextContent="Editar"
-        fields={atualItem}
+        exampleObject={atualItem}
         onSubmit={handleSave}
         initialValues={initialValues}
       />

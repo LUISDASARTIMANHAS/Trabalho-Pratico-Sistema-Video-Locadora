@@ -3,18 +3,18 @@ import React, { useState, useEffect } from "react";
 
 const Form = ({
   btnTextContent = "Salvar",
-  fields = {}, // agora espera um objeto com valores de exemplo
+  exampleObject = {}, // agora espera um objeto com valores de exemplo
   onSubmit,
   initialValues = {},
 }) => {
   const [values, setValues] = useState({});
   const [error, setError] = useState(null);
 
-  console.log("[FORM] Rendering Form with fields (objeto de exemplo):", fields);
+  console.log("[FORM] Rendering Form with exampleObject (objeto de exemplo):", exampleObject);
   console.log("[FORM] Initial values:", initialValues);
 
   // Gera automaticamente os campos com base no objeto "fields"
-  const processedFields = Object.entries(fields)
+  const processedFields = Object.entries(exampleObject)
     .filter(([key]) => key !== "id" && key !== "_id") // ignora id
     .map(([key, value]) => {
       let type = "text";
@@ -41,9 +41,9 @@ const Form = ({
     });
 
   useEffect(() => {
-    if (!fields || typeof fields !== "object" || Array.isArray(fields)) {
+    if (!exampleObject || typeof exampleObject !== "object" || Array.isArray(exampleObject)) {
       console.error(
-        "[FORM] Erro: 'fields' deve ser um objeto exemplo, ex: { nome: 'abc', valor: 5 }"
+        "[FORM] Erro: 'exampleObject' deve ser um objeto exemplo, ex: { nome: 'abc', valor: 5 }"
       );
       setError(
         "Erro: formato inválido de campos. Esperado um objeto exemplo, como { nome: 'abc', valor: 5 }."
@@ -51,7 +51,7 @@ const Form = ({
     } else {
       setError(null);
     }
-  }, [fields]);
+  }, [exampleObject]);
 
   useEffect(() => {
     setValues(initialValues);
@@ -93,7 +93,7 @@ const Form = ({
             value={
               field.type === "checkbox"
                 ? undefined
-                : values[field.name] || fields[field.name] || ""
+                : values[field.name] || exampleObject[field.name] || ""
             }
             checked={field.type === "checkbox" ? values[field.name] || false : undefined}
             onChange={handleChange}

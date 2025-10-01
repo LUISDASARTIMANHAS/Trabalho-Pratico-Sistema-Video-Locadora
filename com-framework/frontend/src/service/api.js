@@ -103,3 +103,17 @@ export async function initData() {
 
 export { get, create, update, remove };
 export default dataStore;
+// example usage
+// import { get, create, update, remove } from "../service/api";
+
+// // buscar
+// const atores = await get("atores");
+
+// // criar
+// await create("atores", { nome: "Novo Ator", nacionalidade: "Brasileiro" });
+
+// // atualizar
+// await update("atores", 1, { nome: "Ator Atualizado" });
+
+// // deletar
+// await remove("atores", 1);

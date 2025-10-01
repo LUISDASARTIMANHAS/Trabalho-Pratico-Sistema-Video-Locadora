@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Form from "../components/Form.jsx"; // importando o componente dinâmico que criamos
 import ConfirmModal from "../components/ConfirmModal.jsx";
+import { create } from "../service/api.js";
 
 const NewPage = ({ moduleConfig }) => {
 	const [showModal, setShowModal] = useState(false);
@@ -22,7 +23,7 @@ const NewPage = ({ moduleConfig }) => {
 			</Link>
 			<Form
 				btnTextContent="Inserir"
-				fields={moduleConfig.data[0]}
+				exampleObject={moduleConfig.data[0]}
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
 			/>
@@ -32,6 +33,7 @@ const NewPage = ({ moduleConfig }) => {
         title="Confirmação"
         message="Deseja realmente Inserir?"
         onConfirm={() => {
+			// await create("atores", data);
           console.log("Item salvo!");
           setShowModal(false);
         }}

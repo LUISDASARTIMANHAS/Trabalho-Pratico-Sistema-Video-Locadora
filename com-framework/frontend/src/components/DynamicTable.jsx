@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ConfirmModal from "./ConfirmModal";
 import { remove } from "../service/api";
+import { getTitleItem } from "../js/utils";
 
 const DynamicTable = ({ data, fields }) => {
   const [showModal, setShowModal] = useState(false);
@@ -97,9 +98,7 @@ const DynamicTable = ({ data, fields }) => {
         show={showModal}
         title="Confirmação de exclusão"
         message={`Deseja realmente excluir o item "${
-          selectedItem
-            ? selectedItem.nome || selectedItem.titulo || selectedItem.id
-            : ""
+          getTitleItem(selectedItem)
         }"?`}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancel}
@@ -109,6 +108,7 @@ const DynamicTable = ({ data, fields }) => {
 };
 
 export default DynamicTable;
+
 
 // example usage:
 // <DynamicTable

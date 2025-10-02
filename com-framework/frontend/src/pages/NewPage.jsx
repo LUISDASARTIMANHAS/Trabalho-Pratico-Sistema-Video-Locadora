@@ -3,14 +3,16 @@ import { Link } from "react-router-dom";
 import Form from "../components/Form.jsx";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import { create } from "../service/api.js";
+import { getItemFromId, getTitleItem } from "../js/utils.js";
 
 const NewPage = ({ moduleConfig }) => {
 	const [showModal, setShowModal] = useState(false);
 	const [initialValues, setInitialValues] = useState(
-		moduleConfig.data?.[0] || {}
+		getItemFromId(0, moduleConfig.data) || {}
 	);
 	const [formData, setFormData] = useState(null);
 
+	console.log("moduleConfig em NewPage:", moduleConfig);
 	const handleFormSubmit = (data) => {
 		console.log("[NewPage] Dados do form:", data);
 		setFormData(data); // salva os dados do form
@@ -50,7 +52,7 @@ const NewPage = ({ moduleConfig }) => {
 			<ConfirmModal
 				show={showModal}
 				title="Confirmação"
-				message={`Deseja realmente inserir este ${moduleConfig.label}?`}
+				message={`Deseja realmente inserir ${getTitleItem(formData)}?`}
 				onConfirm={handleConfirm}
 				onCancel={() => setShowModal(false)}
 			/>

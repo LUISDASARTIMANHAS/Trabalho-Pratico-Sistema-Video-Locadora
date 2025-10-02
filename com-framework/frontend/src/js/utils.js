@@ -5,8 +5,8 @@ import modules from "../js/config/modules.js";
 import { UNSAFE_getPatchRoutesOnNavigationFunction } from "react-router-dom";
 
 function getItemFromId(id, array) {
-  console.log("getItemFromId: id =", id, "array =", array);
-  return array.find((item) => item._id === Number(id));
+  const foundItem = array.find((item) => item._id === Number(id));
+  return foundItem;
 }
 
 function getRandomInt(max) {

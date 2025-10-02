@@ -3,28 +3,26 @@ import { Link } from "react-router-dom";
 import Form from "../components/Form.jsx";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import { create } from "../service/api.js";
-import { getItemFromId, getTitleItem } from "../js/utils.js";
+import { getTitleItem } from "../js/utils.js";
 
 const NewPage = ({ moduleConfig }) => {
-	const [showModal, setShowModal] = useState(false);
-	const [initialValues, setInitialValues] = useState(
-		getItemFromId(0, moduleConfig.data) || {}
-	);
+	const firstItem = moduleConfig.data?.[0] || {};
+	const [initialValues, setInitialValues] = useState(firstItem);
 	const [formData, setFormData] = useState(null);
+	const [showModal, setShowModal] = useState(false);
 
-	console.log("moduleConfig em NewPage:", moduleConfig);
 	const handleFormSubmit = (data) => {
 		console.log("[NewPage] Dados do form:", data);
-		setFormData(data); // salva os dados do form
-		setShowModal(true); // abre modal de confirmação
+		setFormData(data);
+		setShowModal(true);
 	};
 
 	const handleConfirm = async () => {
 		try {
-			console.log("[NewPage] Criando item:", formData);
-			await create(moduleConfig.name, formData); // usa moduleConfig.name como endpoint
-			console.log("Item salvo com sucesso!");
 			setShowModal(false);
+			console.log("[NewPage] Criando item:", formData);
+			await create(moduleConfig.name, formData);
+			console.log("Item salvo com sucesso!");
 		} catch (err) {
 			console.error("Erro ao salvar item:", err);
 			setShowModal(false);
@@ -44,7 +42,7 @@ const NewPage = ({ moduleConfig }) => {
 
 			<Form
 				btnTextContent={`Inserir ${moduleConfig.label}`}
-				exampleObject={moduleConfig.data?.[0]}
+				exampleObject={firstItem}
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
 			/>

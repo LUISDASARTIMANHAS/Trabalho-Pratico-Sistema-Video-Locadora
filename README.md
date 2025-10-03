@@ -2,8 +2,8 @@
 Trabalho-Pratico-Sistema-Video-Locadora
 
 [![Node.js BUILD AND RUN](https://github.com/LUISDASARTIMANHAS/Trabalho-Pratico-Sistema-Video-Locadora/actions/workflows/node.js.yml/badge.svg)](https://github.com/LUISDASARTIMANHAS/Trabalho-Pratico-Sistema-Video-Locadora/actions/workflows/node.js.yml)
-
 [![Deploy React App to GitHub Pages](https://github.com/LUISDASARTIMANHAS/Trabalho-Pratico-Sistema-Video-Locadora/actions/workflows/deploy.yml/badge.svg)](https://github.com/LUISDASARTIMANHAS/Trabalho-Pratico-Sistema-Video-Locadora/actions/workflows/deploy.yml)
+[![pages-build-deployment](https://github.com/LUISDASARTIMANHAS/Trabalho-Pratico-Sistema-Video-Locadora/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages)](https://github.com/LUISDASARTIMANHAS/Trabalho-Pratico-Sistema-Video-Locadora/actions/workflows/pages/pages-build-deployment)
 
 Este documento contém a especificação de requisitos e a modelagemde análise para o projeto de informatização da vídeo-locadora Passatempo.Esta atividade foi desenvolvida usando a técnica de modelagemdecasosde uso e o paradigma orientado a objetos e, portanto, esse documentoapresenta os diagramas de caso de uso, diagramas de pacotes, diagramasde classes gerados, bem como as descrições dos atores e dos casosdeusosidentificados.
 

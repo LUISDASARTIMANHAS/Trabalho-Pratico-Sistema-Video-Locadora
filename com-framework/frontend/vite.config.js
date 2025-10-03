@@ -7,4 +7,5 @@ export default defineConfig({
   build: {
     outDir: "docs", // pasta de saída (antes era dist)
   },
+  base: './', // <--- isso faz os caminhos serem relativos
 })

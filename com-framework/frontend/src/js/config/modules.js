@@ -22,13 +22,11 @@ const modules = [
     name: "classes",
     label: "Classes",
     data: filtrarCampos(excludeFields,classesArray),
-    excludeFields: [],
   },
   {
     name: "diretores",
     label: "Diretores",
-    data: diretoresArray,
-    excludeFields: [],
+    data: filtrarCampos(excludeFields,diretoresArray),
   },
 ];
 

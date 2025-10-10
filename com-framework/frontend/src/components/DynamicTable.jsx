@@ -3,19 +3,23 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ConfirmModal from "./ConfirmModal";
 import { remove } from "../service/api";
-import { getTitleItem } from "../js/utils";
+import { extractKeys, filtrarCampos, getTitleItem } from "../js/utils";
 import Loading from "./Loading";
 
 const DynamicTable = ({ data, fields }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [loading, setLoading] = useState(false); // Estado para controlar o overlay
+  const tableFiltros = ["_id", "id"];
 
   if (!data || data.length === 0)
     return <p className="text-muted">Nenhum dado disponível.</p>;
 
   // pega os campos dinamicamente ou usa os fornecidos
-  const detectedFields = fields || Object.keys(data[0]);
+  const detectedFields = fields || extractKeys(data);
+  const filteredFilds = filtrarCampos(tableFiltros, detectedFields);
+  console.log("[DynamicTable] Campos detectados:", detectedFields);
+  console.log("[DynamicTable] Campos filtrados:", filteredFilds);
 
   // pega o moduleName da URL (ator, filme, etc.)
   const { moduleName } = useParams();
@@ -59,7 +63,7 @@ const DynamicTable = ({ data, fields }) => {
       <table className="table table-striped table-bordered table-hover">
         <thead className="table-dark">
           <tr>
-            {detectedFields.map((field) => (
+            {filteredFilds.map((field) => (
               <th key={field}>
                 {field
                   .replace(/_/g, " ")
@@ -72,7 +76,7 @@ const DynamicTable = ({ data, fields }) => {
         <tbody>
           {data.map((item, idx) => (
             <tr key={idx}>
-              {detectedFields.map((field) => (
+              {filteredFilds.map((field) => (
                 <td key={field}>{item[field]}</td>
               ))}
               <td>

@@ -3,9 +3,8 @@
 import { atoresArray } from "../../assets/database/atores";
 import { classesArray } from "../../assets/database/classes";
 import { diretoresArray } from "../../assets/database/diretores";
+import { filtrarCampos } from "../utils";
 const excludeFields = [
-  "id",
-  "_id",
   "ativo",
   "data_nascimento",
   "nacionalidade",

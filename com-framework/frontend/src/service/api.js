@@ -17,7 +17,7 @@ const api = axios.create({
 });
 
 // 🗃 Data store
-const dataStore = {};
+let dataStore = {};
 
 // ========== FUNÇÕES GENÉRICAS ==========
 async function get(endpoint) {
@@ -30,7 +30,7 @@ async function get(endpoint) {
       throw new Error(`Resposta inválida da API: ${response.data}`);
     }
 
-    return response.data;
+    return response.data.content;
   } catch (error) {
     await telemetria(error.message || error.toString());
     return [];
@@ -81,30 +81,21 @@ async function telemetria(error) {
 }
 
 // ========== INICIALIZAÇÃO ==========
-for (const banco of bancos) {
-  const varName = `${banco}Array`;
-  dataStore[varName] = [];
-
-  // busca dados inicial (lazy load)
-  get(banco).then((data) => {
-    dataStore[varName] = data;
-  });
-}
-
 export async function initData() {
-  console.log("Iniciando...");
-  await Promise.all(
-    bancos.map(async (banco) => {
-      const varName = `${banco}Array`;
-      const data = await get(banco);
-      dataStore[varName] = data;
-    })
-  );
-  console.log("[INIT DATA]: ",dataStore);
-}
+  for (const banco of bancos) {
+    const varName = `${banco}Array`;
+    dataStore[varName] = [];
 
-export { get, create, update, remove };
-export default dataStore;
+    // busca dados inicial (lazy load)
+    await get(banco).then((data) => {
+      dataStore[varName] = data;
+    });
+    console.log(dataStore);
+  }
+}
+await initData();
+
+export { get, create, update, remove, dataStore };
 // example usage
 // import { get, create, update, remove } from "../service/api";
 

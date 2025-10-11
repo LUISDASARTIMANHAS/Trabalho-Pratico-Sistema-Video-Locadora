@@ -1,31 +1,25 @@
-// src/components/DynamicTable.jsx
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ConfirmModal from "./ConfirmModal";
-import { remove } from "../service/api";
 import { extractKeys, filtrarCampos, getTitleItem } from "../js/utils";
 import Loading from "./Loading";
+import { remove } from "../service/apiFunctions";
 
 const DynamicTable = ({ data, fields }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [loading, setLoading] = useState(false); // Estado para controlar o overlay
+  const [loading, setLoading] = useState(false);
   const tableFiltros = ["_id", "id"];
 
   if (!data || data.length === 0)
     return <p className="text-muted">Nenhum dado disponível.</p>;
 
-  // pega os campos dinamicamente ou usa os fornecidos
   const detectedFields = fields || extractKeys(data);
   const filteredFilds = filtrarCampos(tableFiltros, detectedFields);
-  console.log("[DynamicTable] Campos detectados:", detectedFields);
-  console.log("[DynamicTable] Campos filtrados:", filteredFilds);
-
-  // pega o moduleName da URL (ator, filme, etc.)
   const { moduleName } = useParams();
 
   const handleDeleteClick = (item) => {
-    console.log("[DYNAMIC TABLE] Solicitando exclusão de:", item);
+    console.log("[DynamicTable] Solicitando exclusão de:", item);
     setSelectedItem(item);
     setShowModal(true);
   };
@@ -38,22 +32,27 @@ const DynamicTable = ({ data, fields }) => {
     setSelectedItem(null);
   };
 
-  const tryDelete = async (data) => {
-    console.log("[DYNAMIC TABLE] Tentando deletar item...");
+  const tryDelete = async (item) => {
     try {
-      setLoading(true); // Ativa o overlay
-      // usa moduleConfig.name como endpoint
-      await remove(moduleName, data._id);
-      console.log("[DYNAMIC TABLE] Item deletado com sucesso!");
+      setLoading(true);
+      window.addAlert(`🗑️ Excluindo ${moduleName}...`, "warning");
+      window.addAlert(`📤 Enviando requisição de exclusão...`, "info");
+
+      await remove(moduleName, item._id);
+
+      window.addAlert(`✅ ${getTitleItem(item)} removido com sucesso!`, "success");
+      console.log("[DynamicTable] Item deletado com sucesso!");
     } catch (err) {
-      console.error("[DYNAMIC TABLE] Erro ao deletar item:", err);
+      window.addAlert(`❌ Erro ao excluir! ${err}`, "danger");
+      console.error("[DynamicTable] Erro ao deletar item:", err);
     } finally {
-      setLoading(false); // Desativa o overlay mesmo se der erro
+      window.addAlert("🏁 Processo de exclusão concluído", "success");
+      setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    console.log("[DYNAMIC TABLE] Exclusão cancelada");
+    console.log("[DynamicTable] Exclusão cancelada");
     setShowModal(false);
     setSelectedItem(null);
   };
@@ -80,15 +79,12 @@ const DynamicTable = ({ data, fields }) => {
                 <td key={field}>{item[field]}</td>
               ))}
               <td>
-                {/* Editar -> vai para rota dinâmica */}
                 <Link
                   to={`/${moduleName}/editar/${item.id || item._id}`}
                   className="btn btn-sm btn-warning me-2"
                 >
                   Editar
                 </Link>
-
-                {/* Excluir -> abre modal */}
                 <button
                   onClick={() => handleDeleteClick(item)}
                   className="btn btn-sm btn-danger"
@@ -101,7 +97,6 @@ const DynamicTable = ({ data, fields }) => {
         </tbody>
       </table>
 
-      {/* Modal de confirmação */}
       <ConfirmModal
         show={showModal}
         title="Confirmação de exclusão"
@@ -112,19 +107,9 @@ const DynamicTable = ({ data, fields }) => {
         onCancel={handleCancel}
       />
 
-      {/* Overlay de Loading */}
       {loading && <Loading message={`Deletando ${moduleName}`} />}
     </>
   );
 };
 
 export default DynamicTable;
-
-// example usage:
-// <DynamicTable
-//   data={moduleConfig.data}
-//   fields={moduleConfig.fields}
-//   onDelete={(item) => {
-//     console.log("Excluir:", item);
-//   }}
-// />

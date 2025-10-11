@@ -14,8 +14,13 @@ const VideoLocadora = () => {
 
   useEffect(() => {
     (async () => {
+      try {
       await initData();
-      setLoaded(true);
+    } catch (err) {
+      window.addAlert(`❌ Falha ao sincronizar dados! ${err}`, "danger");
+    } finally {
+      setLoaded(true); // sempre carregar o app
+    }
     })();
   }, []);
 

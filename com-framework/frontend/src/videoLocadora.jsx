@@ -20,7 +20,7 @@ const VideoLocadora = () => {
   }, []);
 
   const asideLinks = [
-    { path: "/", label: "Início" },
+    { path: "/home", label: "Início" },
     ...modules.flatMap(({ name, label }) => [
       { path: `/${name}`, label },
       { path: `/${name}/novo`, label: `Novo ${label}` },

@@ -33,6 +33,5 @@ export async function initData() {
     console.log(dataStore);
   }
 }
-await initData();
 
 export { api,dataStore };

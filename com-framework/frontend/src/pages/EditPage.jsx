@@ -3,8 +3,8 @@ import ConfirmModal from "../components/ConfirmModal.jsx";
 import { Link } from "react-router-dom";
 import Form from "../components/Form.jsx";
 import { extractKeys, getItemFromId, getTitleItem } from "../js/utils.js";
-import { update } from "../service/api.js";
 import Loading from "../components/Loading.jsx";
+import { update } from "../service/apiFunctions.js";
 
 const EditPage = ({ moduleConfig, id }) => {
   const atualItem = getItemFromId(id, moduleConfig.data);

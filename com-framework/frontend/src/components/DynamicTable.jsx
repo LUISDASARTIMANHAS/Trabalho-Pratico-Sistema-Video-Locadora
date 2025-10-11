@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ConfirmModal from "./ConfirmModal";
-import { remove } from "../service/api";
 import { extractKeys, filtrarCampos, getTitleItem } from "../js/utils";
 import Loading from "./Loading";
+import { remove } from "../service/apiFunctions";
 
 const DynamicTable = ({ data, fields }) => {
   const [showModal, setShowModal] = useState(false);

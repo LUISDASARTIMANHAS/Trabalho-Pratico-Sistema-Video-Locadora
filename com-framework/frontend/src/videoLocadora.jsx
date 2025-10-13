@@ -15,7 +15,8 @@ const VideoLocadora = () => {
   useEffect(() => {
     (async () => {
       try {
-      await initData();
+      await initData(true);
+      console.log("[INIT] DataStore pronto, iniciando app...");
     } catch (err) {
       window.addAlert(`❌ Falha ao sincronizar dados! ${err}`, "danger");
     } finally {

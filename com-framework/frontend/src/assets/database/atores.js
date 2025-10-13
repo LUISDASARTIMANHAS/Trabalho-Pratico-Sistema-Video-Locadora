@@ -1,7 +1,7 @@
-import { dataStore } from "../../service/api.js";
+const atoresArray = store.getBanco("atores");
 
-console.log("[DB CONTROLLER ATORES]: ", dataStore);
-let atoresArray = dataStore.atoresArray; // cria cópia local mutável
+console.log("[DB CONTROLLER ATORES]: ", store);
+console.log("atoresArray", atoresArray);
 if (!atoresArray || atoresArray.length === 0) {
   console.log("Usando dados locais para atores.js");
   atoresArray = [

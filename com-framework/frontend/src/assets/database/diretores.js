@@ -1,5 +1,8 @@
-import { dataStore } from "../../service/api.js";
+import { dataStore, syncBanco } from "../../service/api.js";
 
+
+// Sincronizar apenas "diretores"
+await syncBanco("diretores");
 console.log("[DB CONTROLLER DIRETOR]: ", dataStore);
 let diretoresArray = dataStore.diretoresArray; // cria cópia local mutável
 

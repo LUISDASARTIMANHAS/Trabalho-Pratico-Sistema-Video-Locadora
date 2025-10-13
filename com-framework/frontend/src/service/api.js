@@ -49,7 +49,9 @@ export async function carregarBanco(banco) {
     console.log(`[API] Dados carregados de ${banco}:`, data);
     return data;
   } catch (err) {
-    console.warn(`[LOCAL] Falha ao carregar ${banco} da API, usando dados locais.`);
+    console.warn(
+      `[LOCAL] Falha ao carregar ${banco} da API, usando dados APIdemo.`
+    );
     const localData = await getDebug(); // fallback para dados locais
     dataStore[varName] = localData;
     safeAlert(`⚠️ Usando dados locais para ${banco}`, "warning");
@@ -75,42 +77,19 @@ export async function syncData() {
     safeAlert(`🔄 Sincronizando ${banco}...`, "info");
 
     try {
-      // Aqui você pode usar getDebug() ou get() dependendo da lógica de atualização
-      const data = await getDebug(); // fallback local
+      const data = await get(banco);
       dataStore[varName] = data;
       safeAlert(`✅ ${banco} sincronizado!`, "success");
       console.log(`[SYNC] ${banco} sincronizado:`, data);
     } catch (err) {
+      console.warn(
+        `[SYNC] Falha ao sincronizar ${banco} da API, usando dados demoAPI.`
+      );
+      const localData = await getDebug(); // fallback local
+      dataStore[varName] = localData;
       console.error(`[SYNC] Erro ao sincronizar ${banco}:`, err);
       safeAlert(`❌ Falha ao sincronizar ${banco}`, "error");
     }
   }
 }
-
-/**
- * Sincroniza um banco específico.
- * @param {string} banco - Nome do banco a sincronizar
- * @return {Promise<any[]>} - Dados sincronizados
- */
-export async function syncBanco(banco) {
-  const varName = `${banco}Array`;
-  safeAlert(`🔄 Sincronizando ${banco}...`, "info");
-
-  try {
-    // Tenta primeiro a API
-    const data = await get(banco);
-    dataStore[varName] = data;
-    safeAlert(`✅ ${banco} sincronizado da API!`, "success");
-    console.log(`[SYNC] ${banco} sincronizado da API:`, data);
-    return data;
-  } catch (err) {
-    console.warn(`[SYNC] Falha ao sincronizar ${banco} da API, usando dados locais.`);
-    const localData = await getDebug(); // fallback local
-    dataStore[varName] = localData;
-    safeAlert(`⚠️ ${banco} sincronizado com dados locais`, "warning");
-    console.log(`[SYNC] ${banco} sincronizado localmente:`, localData);
-    return localData;
-  }
-}
-
 export { api, dataStore };

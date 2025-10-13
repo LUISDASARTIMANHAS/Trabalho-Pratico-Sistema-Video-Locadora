@@ -1,7 +1,7 @@
-import { dataStore, syncBanco } from "../../service/api.js";
+import { dataStore, carregarBanco } from "../../service/api.js";
 
 // Sincronizar apenas "classes"
-await syncBanco("classes");
+await carregarBanco("classes");
 
 console.log("[DB CONTROLLER CLASSES]: ", dataStore);
 

@@ -7,7 +7,7 @@
   "type": "module",
   "main": "main.jsx",
   "scripts": {
-    "dev": "set NO_COLOR=1 && npm run auto-install && vite",
+    "dev": "set NO_COLOR=1 && npm run auto-install && vite --host",
     "build": "npm run update && vite build",
     "lint": "eslint .",
     "preview": "npm run update && vite preview",

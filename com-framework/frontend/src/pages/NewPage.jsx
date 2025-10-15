@@ -36,6 +36,7 @@ const NewPage = ({ moduleConfig }) => {
       window.addAlert(`❌ Falha ao criar! ${err}`, "danger");
       console.error("[NewPage] Erro ao salvar item:", err);
     } finally {
+      carregarBanco(moduleConfig.name);
       window.addAlert("✅ Processo finalizado", "success");
       setLoading(false);
     }

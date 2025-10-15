@@ -1,19 +1,19 @@
-const ListPage = ({ moduleConfig, reloadData }) => {
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import DynamicTable from "../components/DynamicTable";
+
+const ListPage = ({ moduleConfig }) => {
   const [tableData, setTableData] = useState(moduleConfig.data);
 
   useEffect(() => {
     setTableData(moduleConfig.data);
   }, [moduleConfig.data]);
 
-  const handleReload = async () => {
-    const freshData = await reloadData();
-    setTableData(freshData);
-  };
+  console.log("Rendering ListPage with data:", tableData);
 
   return (
     <div>
       <h1>Lista de {moduleConfig.label}</h1>
-      <button onClick={handleReload}>Recarregar</button>
       <Link
         to={`/${moduleConfig.name}/novo`}
         style={{ display: "inline-block", marginBottom: "20px" }}
@@ -25,3 +25,5 @@ const ListPage = ({ moduleConfig, reloadData }) => {
     </div>
   );
 };
+
+export default ListPage;

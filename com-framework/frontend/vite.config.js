@@ -3,6 +3,9 @@ import react from '@vitejs/plugin-react'
 import viteImagemin from 'vite-plugin-imagemin' // otimização de imagens
 
 export default defineConfig({
+  server: {
+    host: true // or '0.0.0.0' to listen on all addresses
+  },
   plugins: [
     react(),
     viteImagemin({

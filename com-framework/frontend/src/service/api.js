@@ -1,12 +1,14 @@
 // src/service/api.js
 import axios from "axios";
+import { get, getDebug, getUrl } from "./apiFunctions";
 
 const { VITE_ENV } = import.meta.env;
-const url = VITE_ENV === "development" ? "http://localhost:8085/api" : "/api";
+const url = getUrl(VITE_ENV);
 
-// 👇 Bancos que você quer carregar
+// Bancos que você quer carregar
 const bancos = ["atores", "classes", "diretores"];
 
+// Cria instância Axios
 const api = axios.create({
   baseURL: url,
   timeout: 10000,
@@ -16,104 +18,87 @@ const api = axios.create({
   },
 });
 
-// 🗃 Data store
-const dataStore = {};
+export const productionAPI = axios.create({
+  baseURL: getUrl("production"),
+  timeout: 10000,
+  headers: {
+    Authorization: `Bearer ${new Date()}`,
+    "Content-Type": "application/json",
+  },
+});
 
-// ========== FUNÇÕES GENÉRICAS ==========
-async function get(endpoint) {
-  try {
-    const response = await api.get(`${endpoint}`, {
-      headers: { Accept: "application/json" },
-    });
+// Armazena os dados carregados
+let dataStore = {};
 
-    if (typeof response.data !== "object") {
-      throw new Error(`Resposta inválida da API: ${response.data}`);
-    }
-
-    return response.data;
-  } catch (error) {
-    await telemetria(error.message || error.toString());
-    return [];
+/**
+ * Chama window.addAlert se estiver definido.
+ * @param {string} mensagem - Mensagem a exibir
+ * @param {string} tipo - Tipo do alerta ("info", "success", "warning", "error")
+ */
+function safeAlert(mensagem, tipo = "info") {
+  if (typeof window.addAlert === "function") {
+    window.addAlert(mensagem, tipo);
+  } else {
+    console.warn(`[ALERTA] ${tipo.toUpperCase()}: ${mensagem}`);
   }
 }
 
-async function create(endpoint, payload) {
-  try {
-    const response = await api.post(`${endpoint}`, payload);
-    return response.data;
-  } catch (error) {
-    await telemetria(error.message || error.toString());
-    return null;
-  }
-}
-
-async function update(endpoint, id, payload) {
-  try {
-    const response = await api.put(`${endpoint}/${id}`, payload);
-    return response.data;
-  } catch (error) {
-    await telemetria(error.message || error.toString());
-    return null;
-  }
-}
-
-async function remove(endpoint, id) {
-  try {
-    const response = await api.delete(`${endpoint}/${id}`);
-    return response.data;
-  } catch (error) {
-    await telemetria(error.message || error.toString());
-    return null;
-  }
-}
-
-// ========== TELEMETRIA ==========
-async function telemetria(error) {
-  try {
-    await api.post(`/telemetria`, {
-      mensagem: "Erro ao comunicar com API",
-      erro: error,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (err) {
-    console.error("Erro ao enviar telemetria:", err.message);
-  }
-}
-
-// ========== INICIALIZAÇÃO ==========
-for (const banco of bancos) {
+/**
+ * Carrega os dados de um banco, se falhar, usa dados locais.
+ * @param {string} banco - Nome do banco
+ * @return {Promise<any[]>} - Array de dados
+ */
+export async function carregarBanco(banco) {
   const varName = `${banco}Array`;
-  dataStore[varName] = [];
-
-  // busca dados inicial (lazy load)
-  get(banco).then((data) => {
+  try {
+    safeAlert(`🔄 Carregando ${banco} da API...`, "info");
+    const data = await get(banco);
     dataStore[varName] = data;
-  });
+    safeAlert(`✅ ${banco} carregado da API!`, "success");
+    console.log(`[API] Dados carregados de ${banco}:`, data);
+    return data;
+  } catch (err) {
+    console.warn(
+      `[LOCAL] Falha ao carregar ${banco} da API, usando dados APIdemo.`
+    );
+    const localData = await getDebug(); // fallback para dados locais
+    dataStore[varName] = localData;
+    safeAlert(`⚠️ Usando dados APIdemo para ${banco}`, "warning");
+    return localData;
+  }
 }
 
-export async function initData() {
-  await Promise.all(
-    bancos.map(async (banco) => {
-      const varName = `${banco}Array`;
+/**
+ * Inicializa todos os bancos na inicialização do sistema.
+ */
+export async function inicializarDados() {
+  for (const banco of bancos) {
+    await carregarBanco(banco);
+  }
+}
+
+/**
+ * Sincroniza os dados dos bancos, com alertas e fallback.
+ */
+export async function syncData() {
+  for (const banco of bancos) {
+    const varName = `${banco}Array`;
+    safeAlert(`🔄 Sincronizando ${banco}...`, "info");
+
+    try {
       const data = await get(banco);
       dataStore[varName] = data;
-    })
-  );
+      safeAlert(`✅ ${banco} sincronizado!`, "success");
+      console.log(`[SYNC] ${banco} sincronizado:`, data);
+    } catch (err) {
+      console.warn(
+        `[SYNC] Falha ao sincronizar ${banco} da API, usando dados demoAPI.`
+      );
+      const localData = await getDebug(); // fallback local
+      dataStore[varName] = localData;
+      console.error(`[SYNC] Erro ao sincronizar ${banco}:`, err);
+      safeAlert(`❌ Falha ao sincronizar ${banco}`, "error");
+    }
+  }
 }
-
-export { get, create, update, remove };
-export default dataStore;
-// example usage
-// import { get, create, update, remove } from "../service/api";
-
-// // buscar
-// const atores = await get("atores");
-
-// // criar
-// await create("atores", { nome: "Novo Ator", nacionalidade: "Brasileiro" });
-
-// // atualizar
-// await update("atores", 1, { nome: "Ator Atualizado" });
-
-// // deletar
-// await remove("atores", 1);
+export { api, dataStore };

@@ -1,6 +1,10 @@
-import apiData from "../../service/api.js";
+import { dataStore, carregarBanco } from "../../service/api.js";
 
-let diretoresArray = apiData.diretoresArray; // cria cópia local mutável
+
+// Sincronizar apenas "diretores"
+await carregarBanco("diretores");
+console.log("[DB CONTROLLER DIRETOR]: ", dataStore);
+let diretoresArray = dataStore.diretoresArray; // cria cópia local mutável
 
 if (!diretoresArray || diretoresArray.length === 0) {
   console.log("Usando dados locais para diretores.js");

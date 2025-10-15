@@ -1,7 +1,11 @@
-import { data } from "react-router-dom";
-import apiData from "../../service/api.js";
+import { dataStore, carregarBanco } from "../../service/api.js";
 
-let classesArray = apiData.classesArray; // cria cópia local mutável
+// Sincronizar apenas "classes"
+await carregarBanco("classes");
+
+console.log("[DB CONTROLLER CLASSES]: ", dataStore);
+
+let classesArray = dataStore.classesArray; // cria cópia local mutável
 if (!classesArray || classesArray.length === 0) {
   console.log("Usando dados locais para classes.js");
   classesArray = [

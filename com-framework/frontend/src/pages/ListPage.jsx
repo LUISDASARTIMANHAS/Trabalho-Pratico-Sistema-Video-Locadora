@@ -2,12 +2,22 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import DynamicTable from "../components/DynamicTable";
 
+/**
+ * Página de listagem de módulos dinâmicos
+ * @param {Object} moduleConfig - Configuração do módulo (label, name, data)
+ * @return {JSX.Element}
+ */
 const ListPage = ({ moduleConfig }) => {
-  const [tableData, setTableData] = useState(moduleConfig.data);
+  const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
-    setTableData(moduleConfig.data);
-  }, [moduleConfig.data]);
+    // Garante nova referência e dispara re-render
+    if (Array.isArray(moduleConfig.data)) {
+      setTableData([...moduleConfig.data]);
+    } else {
+      setTableData([]);
+    }
+  }, [JSON.stringify(moduleConfig.data)]); // Detecta mudanças profundas
 
   console.log("Rendering ListPage with data:", tableData);
 
@@ -21,7 +31,8 @@ const ListPage = ({ moduleConfig }) => {
         + Inserir novos {moduleConfig.label}
       </Link>
 
-      <DynamicTable data={tableData} />
+      {/* Força re-render quando tableData muda */}
+      <DynamicTable key={JSON.stringify(tableData)} data={tableData} />
     </div>
   );
 };

@@ -3,9 +3,7 @@ package com.locadora.backend.service;
 import com.locadora.backend.domain.Ator;
 import com.locadora.backend.dto.*;
 import com.locadora.backend.repository.AtorRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -16,79 +14,99 @@ import java.util.List;
 public class AtorService {
 
     private final AtorRepository repo;
-    public AtorService(AtorRepository repo) { this.repo = repo; }
 
+    public AtorService(AtorRepository repo) {
+        this.repo = repo;
+    }
+
+    /* ================================================================
+       CRIAR NOVO ATOR
+       - Valida duplicidade de nome
+       - Define o ator como ativo por padrão (campo fixo no banco)
+    ================================================================ */
     @Transactional
     public AtorDTO criar(AtorCreateDTO dto) {
-        if (dto.getDataNascimento() != null &&
-                repo.existsByNomeAndDataNascimento(dto.getNome().trim(), dto.getDataNascimento())) {
-            throw new BusinessException("Já existe ator com este nome e data de nascimento.");
+        if (repo.existsByNomeIgnoreCase(dto.getNome().trim())) {
+            throw new BusinessException("Já existe ator com este nome.");
         }
-        Ator a = new Ator();
-        a.setNome(dto.getNome().trim());
-        a.setNacionalidade(dto.getNacionalidade());
-        a.setDataNascimento(dto.getDataNascimento());
-        a.setAtivo(true);
-        return toDTO(repo.save(a));
+
+        Ator ator = new Ator();
+        ator.setNome(dto.getNome().trim());
+        ator.setAtivo(true);
+
+        return toDTO(repo.save(ator));
     }
 
+    /* ================================================================
+       BUSCAR POR ID
+       - Retorna DTO se encontrado
+       - Lança NotFoundException se não existir
+    ================================================================ */
     @Transactional(readOnly = true)
     public AtorDTO buscarPorId(Long id) {
-        Ator a = repo.findById(id).orElseThrow(() -> new NotFoundException("Ator não encontrado"));
-        return toDTO(a);
+        Ator ator = repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Ator não encontrado"));
+        return toDTO(ator);
     }
 
+    /* ================================================================
+       LISTAR COM FILTRO E PAGINAÇÃO
+       - Busca paginada e filtrada apenas por nome
+    ================================================================ */
     @Transactional(readOnly = true)
     public Page<AtorDTO> listar(AtorFiltro filtro, Pageable pageable) {
-        Page<Ator> page = (filtro != null && StringUtils.hasText(filtro.getNome()))
-                ? repo.findByNomeContainingIgnoreCase(filtro.getNome().trim(), pageable)
-                : repo.findAll(pageable);
+        Page<Ator> page;
+
+        if (filtro != null && StringUtils.hasText(filtro.getNome())) {
+            page = repo.findByNomeContainingIgnoreCase(filtro.getNome().trim(), pageable);
+        } else {
+            page = repo.findAll(pageable);
+        }
 
         List<AtorDTO> content = page.getContent().stream()
                 .map(this::toDTO)
-                .filter(dto -> {
-                    if (filtro == null) return true;
-                    if (filtro.getAtivo() != null && !filtro.getAtivo().equals(dto.getAtivo())) return false;
-                    if (StringUtils.hasText(filtro.getNacionalidade())) {
-                        if (dto.getNacionalidade() == null) return false;
-                        if (!dto.getNacionalidade().equalsIgnoreCase(filtro.getNacionalidade())) return false;
-                    }
-                    return true;
-                })
                 .toList();
 
-        return new PageImpl<>(content, pageable, content.size());
+        return new PageImpl<>(content, pageable, page.getTotalElements());
     }
 
+    /* ================================================================
+       ATUALIZAR ATOR
+       - Atualiza apenas o nome
+    ================================================================ */
     @Transactional
     public AtorDTO atualizar(Long id, AtorUpdateDTO dto) {
-        Ator a = repo.findById(id).orElseThrow(() -> new NotFoundException("Ator não encontrado"));
-        if (dto.getDataNascimento() != null &&
-                repo.existsByNomeAndDataNascimento(dto.getNome().trim(), dto.getDataNascimento())
-                && !(dto.getNome().equalsIgnoreCase(a.getNome()) &&
-                     dto.getDataNascimento().equals(a.getDataNascimento()))) {
-            throw new BusinessException("Já existe ator com este nome e data de nascimento.");
+        Ator ator = repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Ator não encontrado"));
+
+        if (!ator.getNome().equalsIgnoreCase(dto.getNome().trim())
+                && repo.existsByNomeIgnoreCase(dto.getNome().trim())) {
+            throw new BusinessException("Já existe ator com este nome.");
         }
-        a.setNome(dto.getNome().trim());
-        a.setNacionalidade(dto.getNacionalidade());
-        a.setDataNascimento(dto.getDataNascimento());
-        if (dto.getAtivo() != null) a.setAtivo(dto.getAtivo());
-        return toDTO(repo.save(a));
+
+        ator.setNome(dto.getNome().trim());
+
+        return toDTO(repo.save(ator));
     }
 
+    /* ================================================================
+       EXCLUIR ATOR
+       - Verifica existência
+    ================================================================ */
     @Transactional
     public void excluir(Long id) {
-        Ator a = repo.findById(id).orElseThrow(() -> new NotFoundException("Ator não encontrado"));
-        repo.delete(a);
+        Ator ator = repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Ator não encontrado"));
+        repo.delete(ator);
     }
 
-    private AtorDTO toDTO(Ator a) {
+    /* ================================================================
+       CONVERSÃO ENTIDADE → DTO
+    ================================================================ */
+    private AtorDTO toDTO(Ator ator) {
         AtorDTO dto = new AtorDTO();
-        dto.setId(a.getId());
-        dto.setNome(a.getNome());
-        dto.setNacionalidade(a.getNacionalidade());
-        dto.setDataNascimento(a.getDataNascimento());
-        dto.setAtivo(a.getAtivo());
+        dto.setId(ator.getId());
+        dto.setNome(ator.getNome());
         return dto;
     }
 }

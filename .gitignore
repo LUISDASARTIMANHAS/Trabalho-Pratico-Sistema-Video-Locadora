@@ -91,5 +91,4 @@ dist-ssr
 *.sln
 *.sw?
 *.env
-com-framework/backend/src/main/resources/application.properties
-com-framework/backend/src/main/resources/application.properties
+com-framework/backend/src/main/resources/*

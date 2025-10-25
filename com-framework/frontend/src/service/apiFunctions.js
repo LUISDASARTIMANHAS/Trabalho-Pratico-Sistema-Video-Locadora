@@ -1,6 +1,7 @@
 // src/service/apiFunctions.js
 import { api, productionAPI } from "./api";
-const { VITE_BACKEND_PORT, VITE_BACKEND_DOMAIN, VITE_PRODUCTION_URL } = import.meta.env;
+const {VITE_LOCAL_URL, VITE_BACKEND_PORT, VITE_BACKEND_DOMAIN, VITE_PRODUCTION_URL } =
+  import.meta.env;
 /**
  * Envia telemetria de erro para a API
  * @param {string} error Mensagem de erro
@@ -88,7 +89,6 @@ export async function remove(endpoint, id) {
   return handleRequest(api.delete, `${endpoint}/${id}`);
 }
 
-
 /**
  * Chama window.addAlert se estiver definido.
  * @param {string} mensagem - Mensagem a exibir
@@ -102,15 +102,17 @@ export function safeApiAlert(mensagem, tipo = "info") {
   }
 }
 
-
 /**
  * Retorna a URL correspondente ao ambiente
  * @param {string} type - Ambiente selecionado
  * @return {string} URL da API correspondente
  */
 export function getUrl(type) {
-  if (type && type == "local"){
-    return `http://${VITE_BACKEND_DOMAIN}:${VITE_BACKEND_PORT}/api`
+  if (VITE_LOCAL_URL) {
+    return VITE_LOCAL_URL;
+  }
+  if (type && type == "local") {
+    return `http://${VITE_BACKEND_DOMAIN}:${VITE_BACKEND_PORT}/api`;
   }
   return VITE_PRODUCTION_URL;
 }

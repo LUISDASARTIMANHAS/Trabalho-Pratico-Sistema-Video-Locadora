@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import DynamicTable from "../components/DynamicTable";
-
 /**
  * Página de listagem de módulos dinâmicos
  * @param {Object} moduleConfig - Configuração do módulo (label, name, data)
@@ -32,7 +31,11 @@ const ListPage = ({ moduleConfig }) => {
       </Link>
 
       {/* Força re-render quando tableData muda */}
-      <DynamicTable key={JSON.stringify(tableData)} data={tableData} />
+      <DynamicTable
+        key={JSON.stringify(tableData)}
+        data={tableData}
+        moduleConfig={moduleConfig}
+      />
     </div>
   );
 };

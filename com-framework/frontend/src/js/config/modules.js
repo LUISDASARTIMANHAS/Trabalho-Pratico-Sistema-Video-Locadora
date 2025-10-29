@@ -3,6 +3,8 @@
 import { atoresArray } from "../../assets/database/atores";
 import { classesArray } from "../../assets/database/classes";
 import { diretoresArray } from "../../assets/database/diretores";
+import { titulosArray } from "../../assets/database/titulos";
+import { itensArray } from "../../assets/database/itens";
 import { filtrarCampos } from "../utils";
 const excludeFields = [
   "ativo",
@@ -45,16 +47,17 @@ const modules = [
     },
   },
   {
-    name: "item",
-    label: "Items",
+    name: "itens",
+    label: "Itens",
     description:
       "Este caso de uso é responsável pelo controle de itens (fitas ouDVDs), abrangendo a inclusão, alteração, consulta e exclusão de itens.",
-    data: filtrarCampos(excludeFields, itemArray),
+    data: filtrarCampos(excludeFields, itensArray),
     databaseSchema: {
       numero_de_serie: 41047854527,
-      titulo: "Califórnia",
-      data_aquisicao: "30-07-1947",
-      tipo: "DVD"
+      // vem da tabela titulos
+      titulo: ["Terminator 2"],
+      data_aquisicao: "30-08-1991",
+      tipo: ["DVD", "Fita VHS", "Blu-Ray"],
     },
   },
   {
@@ -65,14 +68,17 @@ const modules = [
     data: filtrarCampos(excludeFields, titulosArray),
     databaseSchema: {
       nome: "Terminator 2",
-      diretor: "James Cameron",
+      // vem da tabela ator
+      diretor: ["James Cameron"],
+      // vem da tabela diretor
       atores: [
         "Arnold Schwarzenegger",
         "Linda Hamilton",
         "Edward Furlong",
         "Robert Patrick",
       ],
-      sinopse: "O jovem John Connor é a chave para a vitória da humanidade sobre a rebelião das máquinas no futuro. O garoto é alvo de T-1000, um exterminador feito de metal líquido que pode assumir a forma que desejar e que foi enviado do futuro para matá-lo. Outro exterminador, o renovado T-800, também é mandado de volta para proteger o menino. Enquanto John e sua mãe, Sarah Connor, fogem com o T-800, o garoto cria um vínculo afetivo inesperado com o robô.",
+      sinopse:
+        "O jovem John Connor é a chave para a vitória da humanidade sobre a rebelião das máquinas no futuro. O garoto é alvo de T-1000, um exterminador feito de metal líquido que pode assumir a forma que desejar e que foi enviado do futuro para matá-lo. Outro exterminador, o renovado T-800, também é mandado de volta para proteger o menino. Enquanto John e sua mãe, Sarah Connor, fogem com o T-800, o garoto cria um vínculo afetivo inesperado com o robô.",
       ano: 1991,
       categoria: "ficção científica",
     },

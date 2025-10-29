@@ -9,13 +9,13 @@ if (!itensArray || itensArray.length === 0) {
   console.log("Usando dados locais para titulos.js");
   itensArray = [
     {
-      numero_de_serie: 41047854527,
+      numSerie: 41047854527,
       titulo: "Terminator 2",
       data_aquisicao: "30-08-1991",
       tipo: "DVD",
     },
     {
-      numero_de_serie: 410478542343,
+      numSerie: 410478542343,
       titulo: "Terminator ",
       data_aquisicao: "25-03-1985",
       tipo: "DVD",

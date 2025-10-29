@@ -11,11 +11,11 @@ if (!diretoresArray || diretoresArray.length === 0) {
   diretoresArray = [
     {
       _id: 1,
-      name: "James Cameron",
+      nome: "James Cameron",
     },
     {
       _id: 2,
-      name: "William Wisher",
+      nome: "William Wisher",
     },
   ];
 }

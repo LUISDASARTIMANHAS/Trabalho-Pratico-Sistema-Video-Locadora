@@ -18,19 +18,19 @@ const modules = [
     name: "atores",
     label: "Atores",
     description:
-      "Este caso de uso é responsável pelo controle de atores, abrangendoainclusão de um novo ator, alteração e exclusão.",
+      "Este caso de uso é responsável pelo controle de atores, abrangendo a inclusão de um novo ator, alteração e exclusão.",
     data: filtrarCampos(excludeFields, atoresArray),
-    databaseSchema: { Nome: "" },
+    databaseSchema: { nome: "Arnold Schwarzenegger" },
   },
   {
     name: "classes",
     label: "Classes",
     description:
-      "Este caso de uso é responsável pelo controle de classes, abrangendoainclusão de uma nova classe, alteração e exclusão.",
+      "Este caso de uso é responsável pelo controle de classes, abrangendo a inclusão de uma nova classe, alteração e exclusão.",
     data: filtrarCampos(excludeFields, classesArray),
     databaseSchema: {
-      nome: "",
-      dataDevolucao: "25/10/2025",
+      nome: "Lançamento",
+      dataDevolucao: "25-10-2025",
       preco_diaria_centavos: 0.4,
     },
   },
@@ -38,7 +38,7 @@ const modules = [
     name: "diretores",
     label: "Diretores",
     description:
-      "Este caso de uso é responsável pelo controle de diretores, abrangendoainclusão de um novo ator, alteração e exclusão.",
+      "Este caso de uso é responsável pelo controle de diretores, abrangendo a inclusão de um novo ator, alteração e exclusão.",
     data: filtrarCampos(excludeFields, diretoresArray),
     databaseSchema: {
       nome: "Arnold Schwarzenegger",
@@ -53,11 +53,12 @@ const modules = [
       "Este caso de uso é responsável pelo controle de itens (fitas ouDVDs), abrangendo a inclusão, alteração, consulta e exclusão de itens.",
     data: filtrarCampos(excludeFields, itensArray),
     databaseSchema: {
-      numero_de_serie: 41047854527,
+      id: 0,
+      numSerie: 41047854527,
       // vem da tabela titulos
       titulo: ["Terminator 2"],
-      data_aquisicao: "30-08-1991",
-      tipo: ["DVD", "Fita VHS", "Blu-Ray"],
+      dtAquisicao: "30-08-1991",
+      tipoItem: "DVD",
     },
   },
   {
@@ -69,7 +70,7 @@ const modules = [
     databaseSchema: {
       nome: "Terminator 2",
       // vem da tabela ator
-      diretor: ["James Cameron"],
+      diretor: "James Cameron",
       // vem da tabela diretor
       atores: [
         "Arnold Schwarzenegger",

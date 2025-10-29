@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FormButton from "./subcomponents/FormButton";
 import FormField from "./subcomponents/FormField";
+import { generateFormFields } from "../js/utils";
 
 /**
  * @component Form
@@ -21,28 +22,7 @@ const Form = ({
   const [error, setError] = useState(null);
 
   // Gera campos dinamicamente
-  const processedFields = Object.entries(exampleObject)
-    .filter(([key]) => key !== "id" && key !== "_id")
-    .map(([key, value]) => {
-      let type = "text";
-      let options = null;
-
-      if (Array.isArray(value)) {
-        type = "select";
-        options = value;
-      } else if (typeof value === "boolean") type = "checkbox";
-      else if (typeof value === "number") type = "number";
-      else if (key.toLowerCase().includes("senha")) type = "password";
-      else if (typeof value === "string" && /^\d{2}\/\d{2}\/\d{4}$/.test(value))
-        type = "date";
-
-      return {
-        name: key,
-        label: key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-        type,
-        options,
-      };
-    });
+  const processedFields = generateFormFields(exampleObject)
 
   useEffect(() => {
     if (!exampleObject || typeof exampleObject !== "object" || Array.isArray(exampleObject)) {
@@ -60,9 +40,18 @@ const Form = ({
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(values);
-  };
+  e.preventDefault();
+
+  // 🔧 Corrige arrays de valor único antes do envio
+  const fixedValues = Object.fromEntries(
+    Object.entries(values).map(([key, value]) => {
+      if (Array.isArray(value) && value.length === 1) return [key, value[0]];
+      return [key, value];
+    })
+  );
+
+  onSubmit(fixedValues);
+};
 
   if (error) return <div className="alert alert-danger">{error}</div>;
 

@@ -1,22 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import axios from "axios";
-import modules from "../js/config/modules.js";
+import modules, { excludeFields } from "../js/config/modules.js";
+import { getLabelByItem } from "./modulesDataUtils.js";
 
 /* ============================================================
  * 🔧 Funções utilitárias gerais
  * ============================================================ */
-
-/**
- * Retorna um item de um array pelo ID.
- * @param {string|number} id - ID a ser buscado.
- * @param {Array<Object>} array - Array de objetos.
- * @returns {Object|undefined} Item encontrado.
- */
-export function getItemFromId(id, array) {
-  const foundItem = array.find((item) => getIDtem(item) === Number(id));
-  return foundItem;
-}
 
 /**
  * Retorna inteiro aleatório até o valor máximo.
@@ -84,15 +74,6 @@ export async function onErrorTelemetria(error) {
 }
 
 /**
- * Busca módulo pelo nome.
- * @param {string} moduleName
- * @returns {Object|undefined}
- */
-export function findModuleConfig(moduleName) {
-  return modules.find((mod) => mod.name === moduleName);
-}
-
-/**
  * Extrai chaves de um objeto ou array.
  * @param {Object|Array} input
  * @returns {string[]}
@@ -110,34 +91,6 @@ export function extractKeys(input) {
   }
   console.warn("[extractKeys] Formato inesperado:", input);
   return [];
-}
-
-/**
- * Retorna título genérico de item.
- * @param {Object} selectedItem
- * @returns {string}
- */
-export function getTitleItem(selectedItem) {
-  if (!selectedItem) return "[getTitleItem] NO ITEM PROVIDED";
-  return (
-    selectedItem.nome ||
-    selectedItem.name ||
-    selectedItem.titulo ||
-    selectedItem.title ||
-    selectedItem.id ||
-    selectedItem._id ||
-    "Item Selecionado"
-  );
-}
-
-/**
- * Retorna ID de item.
- * @param {Object} selectedItem
- * @returns {string|number|null}
- */
-export function getIDtem(selectedItem) {
-  if (!selectedItem) return "[getIDtem] NO ITEM PROVIDED";
-  return selectedItem._id || selectedItem.id || null;
 }
 
 /**
@@ -170,59 +123,99 @@ export function filtrarCampos(filtros, dados) {
  * 🧩 Sistema de geração de campos de formulário
  * ============================================================ */
 
-/**
- * Verifica se o campo parece ser uma data no formato DD/MM/YYYY.
- * @param {string} value
- * @returns {boolean}
- */
 function isDateString(value) {
-  return typeof value === "string" && /^\d{2}\/\d{2}\/\d{4}$/.test(value);
+  return typeof value === "string" && /^(\d{2}[\/-]\d{2}[\/-]\d{4})$/.test(value);
 }
 
-/**
- * Verifica se o nome do campo indica senha.
- * @param {string} key
- * @returns {boolean}
- */
 function isPasswordField(key) {
   return key.toLowerCase().includes("senha");
 }
 
-/**
- * Define o tipo de campo e opções baseado em seu valor e nome.
- * @param {*} value
- * @param {string} key
- * @returns {{ type: string, options: Array|null }}
- */
 export function getFieldType(value, key) {
   if (Array.isArray(value)) return { type: "select", options: value };
   if (typeof value === "boolean") return { type: "checkbox", options: null };
   if (typeof value === "number") return { type: "number", options: null };
   if (isPasswordField(key)) return { type: "password", options: null };
-  if (isDateString(value)) return { type: "date", options: null };
+  if (isDateString(value)) {
+    const [d, m, y] = value.split(/[\/-]/);
+    return { type: "date", options: null, defaultValue: `${y}-${m}-${d}` };
+  }
   return { type: "text", options: null };
 }
 
-/**
- * Converte uma chave em rótulo legível.
- * @param {string} key
- * @returns {string}
- */
 function formatLabel(key) {
   return key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
+function getOptionsFromModules(fieldName) {
+  const mod = modules.find((m) =>
+    m.name.toLowerCase().includes(fieldName.toLowerCase())
+  );
+  if (!mod || !Array.isArray(mod.data)) return [];
+  return mod.data.map(
+    (item) => item.nome || item.titulo || item.name || item.id || "Desconhecido"
+  );
+}
+
 /**
- * Gera campos de formulário com base em um objeto de exemplo.
- * @param {Object} exampleObject
- * @returns {Array<{ name: string, label: string, type: string, options: Array|null }>}
+ * Gera os campos do formulário automaticamente com base na estrutura de um objeto exemplo.
+ * @param {Object} obj - Objeto exemplo.
+ * @returns {Array<{ name: string, label: string, type: string, options: any[] | null }>}
  */
-export function generateFormFields(exampleObject) {
-  return Object.entries(exampleObject)
-    .filter(([key]) => key !== "id" && key !== "_id")
-    .map(([key, value]) => {
-      const { type, options } = getFieldType(value, key);
-      const label = formatLabel(key);
-      return { name: key, label, type, options };
+export function generateFormFields(obj) {
+  return Object.keys(obj)
+    .filter((key) => !excludeFields.includes(key))
+    .map((key) => {
+      const value = obj[key];
+      let type = "text";
+      let options = null;
+
+      // 🔹 Se for um array de strings → select
+      if (Array.isArray(value) && value.every((v) => typeof v === "string")) {
+        type = "select";
+        options = value;
+      }
+
+      // 🔹 Se for array de números → select também (ou select múltiplo se quiser)
+      else if (Array.isArray(value) && value.every((v) => typeof v === "number")) {
+        type = "select";
+        options = value;
+      }
+
+      // 🔹 Se for booleano → checkbox
+      else if (typeof value === "boolean") {
+        type = "checkbox";
+      }
+
+      // 🔹 Se for número → number
+      else if (typeof value === "number") {
+        type = "number";
+      }
+
+      // 🔹 Se o nome do campo contiver "senha" → password
+      else if (key.toLowerCase().includes("senha")) {
+        type = "password";
+      }
+
+      // 🔹 Se for data no formato dd/mm/yyyy ou yyyy-mm-dd → date
+      else if (
+        typeof value === "string" &&
+        /^(\d{4}-\d{2}-\d{2}|\d{2}[\/-]\d{2}[\/-]\d{4})$/.test(value)
+      ) {
+        type = "date";
+      }
+
+      // 🔹 Se o nome termina em "id" → select baseado em outro módulo
+      else if (key.toLowerCase().endsWith("id")) {
+        type = "select";
+        options = getOptionsFromModules(key);
+      }
+
+      return {
+        name: key,
+        label: getLabelByItem(key),
+        type,
+        options,
+      };
     });
 }

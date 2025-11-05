@@ -166,6 +166,37 @@ const modules = [
       ],
     },
   },
+  {
+    name: "locacoes",
+    label: "locações",
+    description:
+      "Este caso de uso é responsável pelo controle de títulos, abrangendo ainclusãode um novo título, alteração, consulta e exclusão de títulos existentes.",
+    // data: filtrarCampos(excludeFields, titulosArray),
+    databaseSchema: {
+      nome: "Asdrubal",
+      dtNascimento: "1924-11-01",
+      sexo: "masculino",
+      cpf: "192.168.224-01",
+      endereco: "R. Central - São José",
+      telefone: "27 12345-6789",
+      dependentes: ["Filho1"],
+    },
+    backendPayloadMinimalRequired: {
+      nome: "string",
+      dtNascimento: "2025-11-01",
+      sexo: "string",
+      cpf: "string",
+      endereco: "string",
+      telefone: "string",
+      dependentes: [
+        {
+          nome: "string",
+          dtNascimento: "2025-11-01",
+          sexo: "string",
+        },
+      ],
+    },
+  },
 ];
 
 export default modules;

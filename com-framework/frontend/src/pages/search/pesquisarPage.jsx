@@ -1,9 +1,9 @@
 import React from 'react'
 
-const pesquisarPage = () => {
+const PesquisarPage = () => {
 	return (
 		<div>pesquisar</div>
 	)
 }
 
-export default pesquisarPage
+export default PesquisarPage

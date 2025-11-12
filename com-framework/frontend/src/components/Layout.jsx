@@ -12,9 +12,9 @@ const Layout = () => {
 
   const asideLinks = [
     { path: "/home", label: "Início" },
+    { path: `/search`, label: "Pesquisar" },
     ...modules.flatMap(({ name, label }) => [
       { path: `/${name}`, label },
-      // { path: `/${name}/novo`, label: `Novo ${label}` },
     ]),
   ];
 

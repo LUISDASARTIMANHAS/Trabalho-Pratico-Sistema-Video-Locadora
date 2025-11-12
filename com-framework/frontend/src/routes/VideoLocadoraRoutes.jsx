@@ -2,14 +2,18 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
-import NotFound from "../pages/NotFound";
-import ListPage from "../pages/ListPage";
-import NewPage from "../pages/NewPage";
-import EditPage from "../pages/EditPage";
 import ModuleWrapper from "../components/ModuleWrapper";
 import ErrorBoundary from "../components/ErrorBoundary"; // ⚠️ Importa o ErrorBoundary
-import AuthPage from "../pages/auth/AuthPage";
 import PrivateRoute from "./PrivateRoute";
+
+// pages
+import NotFound from "../pages/NotFound";
+import ListPage from "../pages/ListPage";
+import EditPage from "../pages/EditPage";
+import NewPage from "../pages/NewPage";
+import AuthPage from "../pages/auth/AuthPage";
+import PesquisarPage from "../pages/search/pesquisarPage.jsx";
+
 
 const AppRoutes = () => {
   return (
@@ -62,6 +66,19 @@ const AppRoutes = () => {
             <ErrorBoundary>
               <ModuleWrapper>
                 <EditPage />
+              </ModuleWrapper>
+            </ErrorBoundary>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/search"
+        element={
+          <PrivateRoute>
+            <ErrorBoundary>
+              <ModuleWrapper>
+                <PesquisarPage />
               </ModuleWrapper>
             </ErrorBoundary>
           </PrivateRoute>

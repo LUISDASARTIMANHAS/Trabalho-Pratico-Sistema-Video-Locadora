@@ -92,3 +92,4 @@ dist-ssr
 *.sw?
 *.env
 com-framework/backend/src/main/resources/*
+application.properties

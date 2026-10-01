@@ -1,14 +1,11 @@
 // src/service/apiFunctions.js
 import { api, productionAPI } from "./api";
-/**
- * Mapeamento de ambientes para URLs
- */
-const urls = {
-  localhost: "http://localhost:8085/api",
-  development2: "",
-  production: "https://my-json-server.typicode.com/typicode/demo/",
-};
-
+const {
+  VITE_LOCAL_URL,
+  VITE_BACKEND_PORT,
+  VITE_BACKEND_DOMAIN,
+  VITE_PRODUCTION_URL,
+} = import.meta.env;
 /**
  * Envia telemetria de erro para a API
  * @param {string} error Mensagem de erro
@@ -34,19 +31,31 @@ export async function telemetria(error) {
 async function handleRequest(fn, ...args) {
   try {
     const response = await fn(...args);
-    if (!response || typeof response.data !== "object") {
+
+    // Se não tem resposta, erro
+    if (!response) {
       throw new Error(`Resposta inválida da API: ${response}`);
+    }
+
+    // Se não tem conteúdo no response.data, pode ser válido para DELETE
+    if (response.status === 204) {
+      return null; // sucesso sem conteúdo
+    }
+
+    // Agora verifica se response.data é objeto, pode aceitar vazio
+    if (
+      response.data === undefined ||
+      response.data === null ||
+      typeof response.data !== "object"
+    ) {
+      throw new Error(
+        `Resposta inválida da API: ${JSON.stringify(response.data)}`
+      );
     }
 
     const data = response.data;
 
-    // 🔍 Detecta automaticamente qual campo contém o conteúdo principal
-    const content =
-      data.content ?? // preferência: content
-      data.data ?? // fallback: data
-      data.result ?? // fallback alternativo: result
-      data ?? // se não tiver nada, usa o próprio objeto
-      null;
+    const content = data.content ?? data.data ?? data.result ?? data ?? null;
 
     if (content === null) {
       throw new Error("Nenhum campo de conteúdo encontrado em response.data");
@@ -54,8 +63,29 @@ async function handleRequest(fn, ...args) {
 
     return content;
   } catch (err) {
-    await telemetria(err.message || err.toString());
-    throw err; // o componente chamador captura
+    // Mensagem principal
+    const errorMessage =
+      err.response?.data?.message || err.message || "Erro desconhecido";
+
+    // Array de erros detalhados
+    const arrayErros = err.response?.data?.errors || [];
+
+    // Concatena todos os erros em uma string
+    const detalhesErros = arrayErros
+      .map((e) => `${e.field}: ${e.message}`)
+      .join("; ");
+
+    // Mensagem final
+    const mensagemFinal = detalhesErros
+      ? `${errorMessage} - Detalhes: ${detalhesErros}`
+      : errorMessage;
+
+    // Envia para telemetria
+    await telemetria(err.response?.data || err.toString());
+
+    // Lança a mensagem final
+    safeApiAlert(`[handleRequest] ❌ ${mensagemFinal}`,"danger");
+    throw mensagemFinal;
   }
 }
 
@@ -85,10 +115,29 @@ export async function remove(endpoint, id) {
 }
 
 /**
+ * Chama window.addAlert se estiver definido.
+ * @param {string} mensagem - Mensagem a exibir
+ * @param {string} tipo - Tipo do alerta ("info", "success", "warning", "error")
+ */
+export function safeApiAlert(mensagem, tipo = "info") {
+  if (typeof window.addAlert === "function") {
+    window.addAlert(mensagem, tipo);
+  } else {
+    console.warn(`[ALERTA] ${tipo.toUpperCase()}: ${mensagem}`);
+  }
+}
+
+/**
  * Retorna a URL correspondente ao ambiente
- * @param {string} env - Ambiente selecionado
+ * @param {string} type - Ambiente selecionado
  * @return {string} URL da API correspondente
  */
-export function getUrl(env) {
-  return urls[env] || urls.production; // fallback para produção
+export function getUrl(type) {
+  if (VITE_LOCAL_URL) {
+    return VITE_LOCAL_URL;
+  }
+  if (type && type == "local") {
+    return `http://${VITE_BACKEND_DOMAIN}:${VITE_BACKEND_PORT}/api`;
+  }
+  return VITE_PRODUCTION_URL;
 }

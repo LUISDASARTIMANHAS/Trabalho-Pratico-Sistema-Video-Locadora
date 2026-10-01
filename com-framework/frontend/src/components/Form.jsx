@@ -1,56 +1,33 @@
-// src/components/Form.jsx
 import React, { useState, useEffect } from "react";
+import { generateFormFields } from "../js/utils";
+import FormField from "./form/FormField";
+import FormButton from "./form/FormButton";
 
+/**
+ * @component Form
+ * @description Form genérico dinâmico que renderiza campos a partir de um objeto de exemplo.
+ * @param {string} btnTextContent - Texto do botão de envio.
+ * @param {Object} exampleObject - Objeto exemplo com estrutura dos campos (ex: { nome: '', ativo: true, tipo: ['A', 'B', 'C'] }).
+ * @param {Function} onSubmit - Função chamada ao enviar o formulário.
+ * @param {Object} initialValues - Valores iniciais do formulário.
+ * @return {JSX.Element}
+ */
 const Form = ({
   btnTextContent = "Salvar",
-  exampleObject = {}, // agora espera um objeto com valores de exemplo
+  exampleObject = {},
   onSubmit,
   initialValues = {},
 }) => {
   const [values, setValues] = useState({});
   const [error, setError] = useState(null);
 
-  console.log("[FORM] Rendering Form with exampleObject (objeto de exemplo):", exampleObject);
-  console.log("[FORM] Initial values:", initialValues);
-
-  // Gera automaticamente os campos com base no objeto "fields"
-  const processedFields = Object.entries(exampleObject)
-    .filter(([key]) => key !== "id" && key !== "_id") // ignora id
-    .map(([key, value]) => {
-      let type = "text";
-
-      if (typeof value === "number") {
-        type = "number";
-      } else if (typeof value === "boolean") {
-        type = "checkbox";
-      } else if (
-        typeof value === "string" &&
-        /^\d{2}\/\d{2}\/\d{4}$/.test(value)
-      ) {
-        // formato dd/mm/yyyy
-        type = "date";
-      }
-
-      return {
-        name: key,
-        label: key
-          .replace(/_/g, " ")
-          .replace(/\b\w/g, (l) => l.toUpperCase()),
-        type,
-      };
-    });
+  // Gera campos dinamicamente
+  const processedFields = generateFormFields(exampleObject)
 
   useEffect(() => {
     if (!exampleObject || typeof exampleObject !== "object" || Array.isArray(exampleObject)) {
-      console.error(
-        "[FORM] Erro: 'exampleObject' deve ser um objeto exemplo, ex: { nome: 'abc', valor: 5 }"
-      );
-      setError(
-        "Erro: formato inválido de campos. Esperado um objeto exemplo, como { nome: 'abc', valor: 5 }."
-      );
-    } else {
-      setError(null);
-    }
+      setError("Erro: formato inválido de campos. Ex: { nome: 'abc', valor: 5 }.");
+    } else setError(null);
   }, [exampleObject]);
 
   useEffect(() => {
@@ -59,51 +36,36 @@ const Form = ({
 
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
-    setValues({
-      ...values,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    setValues({ ...values, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(values);
-  };
+  e.preventDefault();
 
-  if (error) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        {error}
-      </div>
-    );
-  }
+  // 🔧 Corrige arrays de valor único antes do envio
+  const fixedValues = Object.fromEntries(
+    Object.entries(values).map(([key, value]) => {
+      if (Array.isArray(value) && value.length === 1) return [key, value[0]];
+      return [key, value];
+    })
+  );
+
+  onSubmit(fixedValues);
+};
+
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
     <form onSubmit={handleSubmit} className="p-3 border rounded bg-light">
       {processedFields.map((field) => (
-        <div className="mb-3" key={field.name}>
-          <label htmlFor={field.name} className="form-label">
-            {field.label}
-          </label>
-          <input
-            id={field.name}
-            name={field.name}
-            type={field.type}
-            className="form-control"
-            value={
-              field.type === "checkbox"
-                ? undefined
-                : values[field.name] || exampleObject[field.name] || ""
-            }
-            checked={field.type === "checkbox" ? values[field.name] || false : undefined}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <FormField
+          key={field.name}
+          field={field}
+          value={values[field.name]}
+          onChange={handleChange}
+        />
       ))}
-      <button type="submit" className="btn btn-primary">
-        {btnTextContent}
-      </button>
+      <FormButton text={btnTextContent} />
     </form>
   );
 };

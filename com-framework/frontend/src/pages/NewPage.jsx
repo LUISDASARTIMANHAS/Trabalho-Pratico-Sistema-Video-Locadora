@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Form from "../components/Form.jsx";
 import ConfirmModal from "../components/ConfirmModal.jsx";
-import { getTitleItem } from "../js/utils.js";
-import Loading from "../components/Loading.jsx"; // Importar o overlay
 import { create } from "../service/apiFunctions.js";
+import Loading from "../components/subcomponents/Loading.jsx";
+import SubMenu from "../components/SubMenu.jsx";
+import { getNomeItem } from "../js/modulesDataUtils.js";
 
 const NewPage = ({ moduleConfig }) => {
-  const firstItem = moduleConfig.data?.[0] || {};
+  const descricao = moduleConfig.description || "Nenhuma descrição fornecida.";
+  const firstItem = moduleConfig.data?.[0] || moduleConfig.databaseSchema;
   const [initialValues] = useState(firstItem);
   const [formData, setFormData] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -24,33 +26,30 @@ const NewPage = ({ moduleConfig }) => {
       setLoading(true);
       setShowModal(false);
 
-      window.addAlert(`🔄 Criando ${getTitleItem(formData)}...`, "info");
-
       console.log("[NewPage] Criando item:", formData);
-      window.addAlert("📤 Enviando dados ao servidor...", "info");
       await create(moduleConfig.name, formData);
-
-      window.addAlert(`✅ ${getTitleItem(formData)} criado com sucesso!`, "success");
       console.log("[NewPage] Item salvo com sucesso!");
-    } catch (err) {
-      window.addAlert(`❌ Falha ao criar! ${err}`, "danger");
-      console.error("[NewPage] Erro ao salvar item:", err);
     } finally {
-      window.addAlert("✅ Processo finalizado", "success");
+      await moduleConfig.syncData();
       setLoading(false);
     }
   };
+
+  // Links do submenu
+  const submenuLinks = [
+    { path: `/${moduleConfig.name}`, label: "Listagem" },
+    { path: `/${moduleConfig.name}/novo`, label: "Novo" },
+    // Você pode adicionar mais links específicos do módulo aqui
+  ];
 
   return (
     <div>
       <h2>Inserir novos {moduleConfig.label}</h2>
 
-      <Link
-        to={`/${moduleConfig.name}`}
-        style={{ display: "inline-block", marginBottom: "20px" }}
-      >
-        + Ver {moduleConfig.label}
-      </Link>
+      {/* Submenu horizontal */}
+      <SubMenu links={submenuLinks} />
+
+      <p>{descricao}</p>
 
       <Form
         btnTextContent={`Inserir ${moduleConfig.label}`}
@@ -62,7 +61,7 @@ const NewPage = ({ moduleConfig }) => {
       <ConfirmModal
         show={showModal}
         title="Confirmação"
-        message={`Deseja realmente inserir ${getTitleItem(formData)}?`}
+        message={`Deseja realmente inserir ${getNomeItem(formData)}?`}
         onConfirm={handleConfirm}
         onCancel={() => setShowModal(false)}
       />

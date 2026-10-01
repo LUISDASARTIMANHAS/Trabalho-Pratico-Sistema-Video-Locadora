@@ -1,16 +1,11 @@
 // src/service/api.js
 import axios from "axios";
-import { get, getDebug, getUrl } from "./apiFunctions";
+import { get, getDebug, getUrl, safeApiAlert } from "./apiFunctions";
 
-const { VITE_ENV } = import.meta.env;
-const url = getUrl(VITE_ENV);
+const bancos = ["atores", "classes", "diretores","titulos","itens"];
 
-// Bancos que você quer carregar
-const bancos = ["atores", "classes", "diretores"];
-
-// Cria instância Axios
 const api = axios.create({
-  baseURL: url,
+  baseURL: getUrl("local"),
   timeout: 10000,
   headers: {
     Authorization: `Bearer ${new Date()}`,
@@ -27,49 +22,33 @@ export const productionAPI = axios.create({
   },
 });
 
-// Armazena os dados carregados
+// Armazena dados carregados
 let dataStore = {};
 
 /**
- * Chama window.addAlert se estiver definido.
- * @param {string} mensagem - Mensagem a exibir
- * @param {string} tipo - Tipo do alerta ("info", "success", "warning", "error")
- */
-function safeAlert(mensagem, tipo = "info") {
-  if (typeof window.addAlert === "function") {
-    window.addAlert(mensagem, tipo);
-  } else {
-    console.warn(`[ALERTA] ${tipo.toUpperCase()}: ${mensagem}`);
-  }
-}
-
-/**
- * Carrega os dados de um banco, se falhar, usa dados locais.
+ * Carrega dados do backend para um banco específico.
  * @param {string} banco - Nome do banco
- * @return {Promise<any[]>} - Array de dados
+ * @return {Promise<any[]>}
  */
 export async function carregarBanco(banco) {
   const varName = `${banco}Array`;
   try {
-    safeAlert(`🔄 Carregando ${banco} da API...`, "info");
+    safeApiAlert(`🔄 Buscando ${banco} da API...`, "info");
     const data = await get(banco);
     dataStore[varName] = data;
-    safeAlert(`✅ ${banco} carregado da API!`, "success");
     console.log(`[API] Dados carregados de ${banco}:`, data);
     return data;
   } catch (err) {
-    console.warn(
-      `[LOCAL] Falha ao carregar ${banco} da API, usando dados APIdemo.`
-    );
-    const localData = await getDebug(); // fallback para dados locais
+    console.warn(`[LOCAL] Falha ao carregar ${banco}, usando demo.`);
+    const localData = await getDebug();
     dataStore[varName] = localData;
-    safeAlert(`⚠️ Usando dados APIdemo para ${banco}`, "warning");
+    safeApiAlert(`⚠️ Usando dados locais para ${banco}`, "warning");
     return localData;
   }
 }
 
 /**
- * Inicializa todos os bancos na inicialização do sistema.
+ * Inicializa todos os bancos.
  */
 export async function inicializarDados() {
   for (const banco of bancos) {
@@ -78,27 +57,43 @@ export async function inicializarDados() {
 }
 
 /**
- * Sincroniza os dados dos bancos, com alertas e fallback.
+ * 🔁 Sincroniza todos os bancos ou um banco específico.
+ * Pode ser usada globalmente ou em módulos isolados.
+ * @param {string} [banco] - Se fornecido, sincroniza apenas esse banco.
+ * @param {function} [setData] - (Opcional) Atualiza um state React em tempo real.
  */
-export async function syncData() {
-  for (const banco of bancos) {
-    const varName = `${banco}Array`;
-    safeAlert(`🔄 Sincronizando ${banco}...`, "info");
-
-    try {
-      const data = await get(banco);
-      dataStore[varName] = data;
-      safeAlert(`✅ ${banco} sincronizado!`, "success");
-      console.log(`[SYNC] ${banco} sincronizado:`, data);
-    } catch (err) {
-      console.warn(
-        `[SYNC] Falha ao sincronizar ${banco} da API, usando dados demoAPI.`
-      );
-      const localData = await getDebug(); // fallback local
-      dataStore[varName] = localData;
-      console.error(`[SYNC] Erro ao sincronizar ${banco}:`, err);
-      safeAlert(`❌ Falha ao sincronizar ${banco}`, "error");
+export async function syncData(banco, setData) {
+  // 🔸 Caso use sem parâmetros: sincroniza todos
+  if (!banco) {
+    for (const b of bancos) {
+      await syncData(b);
     }
+    return;
+  }
+
+  const varName = `${banco}Array`;
+  console.log(`[SYNC] Sincronizando ${banco}...`);
+
+  try {
+    const data = await get(banco);
+    dataStore[varName] = data;
+
+    if (typeof setData === "function") {
+      setData(data); // 🔥 Atualiza tabela instantaneamente
+    }
+
+    console.log(`[SYNC] ${banco} sincronizado:`, data);
+  } catch (err) {
+    console.warn(`[SYNC] Falha ao sincronizar ${banco}. Usando demo.`);
+    const localData = await getDebug();
+    dataStore[varName] = localData;
+
+    if (typeof setData === "function") {
+      setData(localData);
+    }
+
+    safeApiAlert(`❌ Falha ao sincronizar ${banco}`, "danger");
   }
 }
+
 export { api, dataStore };

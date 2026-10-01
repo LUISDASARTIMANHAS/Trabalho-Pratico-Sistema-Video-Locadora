@@ -1,6 +1,6 @@
 import { carregarBanco, dataStore } from "../../service/api.js";
 
-// Sincronizar apenas "atores"
+// Sincronizar apenas o banco necessario
 await carregarBanco("atores");
 console.log("[DB CONTROLLER ATORES]: ", dataStore);
 let atoresArray = dataStore.atoresArray; // cria cópia local mutável
@@ -9,13 +9,15 @@ if (!atoresArray || atoresArray.length === 0) {
   atoresArray = [
     {
       _id: 1,
-      name: "ator 1",
-      nacionalidade: "brasileiro",
+      nome: "Linda Hamilton",
     },
     {
       _id: 2,
-      name: "ator 2",
-      nacionalidade: "americano",
+      nome: "Arnold Schwarzenegger",
+    },
+    {
+      _id: 3,
+      nome: "Robert Patrick",
     },
   ];
 }

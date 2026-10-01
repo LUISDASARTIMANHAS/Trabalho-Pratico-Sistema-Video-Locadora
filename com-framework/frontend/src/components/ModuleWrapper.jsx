@@ -1,41 +1,70 @@
-// src/js/ModuleWrapper.jsx
-import React from "react";
+// src/wrappers/ModuleWrapper.jsx
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { findModuleConfig } from "../js/utils";
+import {getRandomInt } from "../js/utils";
+import { syncData } from "../service/api";
+import { getModuleByName } from "../js/modulesUtils";
+import { safeApiAlert } from "../service/apiFunctions";
 
-/*
-	ModuleWrapper é um "envoltório" para páginas dinâmicas de módulos.
-	Ele:
-		1. Pega o nome do módulo da URL via useParams()
-		2. Busca a configuração do módulo (dados, label, etc.) usando findModuleConfig()
-		3. Se não encontrar, retorna um JSX de fallback
-		4. Se encontrar, injeta a moduleConfig como prop no componente filho automaticamente
-			usando React.cloneElement
+export const errorMessages = [
+  "Ops! Parece que aqui não tem nada… nem poeira! 🧹",
+  "Nada para mostrar… O fantasma dos dados levou tudo! 👻",
+  "Tabela vazia! Hora de adicionar algum conteúdo, antes que ela fique triste 😢",
+  "Hmm… nada aqui ainda. Talvez os dados estejam de férias 🌴",
+  "Zero dados encontrados. Mas hey, pelo menos o café está garantido ☕",
+  "Atenção! Este espaço está reservado para dados incríveis que ainda não chegaram 🚀",
+];
 
-	Isso permite que você não precise repetir if(!moduleConfig) e useParams() em todas as páginas
-*/
 const ModuleWrapper = ({ children }) => {
-  const { moduleName,id } = useParams(); // Pega o parâmetro da URL
-  const moduleConfig = findModuleConfig(moduleName); // Busca configuração do módulo
+  const { moduleName, id } = useParams();
+  const baseConfig = getModuleByName(moduleName);
+  const [data, setData] = useState(baseConfig?.data || []);
 
-  if (!moduleConfig) {
-    // Caso módulo não exista, mostra mensagem de erro
-    return (
-      <div className="p-3">
-        <h2 className="text-danger">Módulo não encontrado: {moduleName}</h2>
-      </div>
-    );
+  // Função local de sincronização para este módulo
+  const WARPSync = async () => {
+    try {
+      await syncData(moduleName, setData);
+    } catch (err) {
+      safeApiAlert(`[ModuleWrapper] Erro ao sincronizar ${moduleName}: ${err}`, "danger");
+      console.error(`[ModuleWrapper] Erro ao sincronizar ${moduleName}:`, err);
+    }
+  };
+
+  useEffect(() => {
+    WARPSync();
+    const interval = setInterval(WARPSync, 1000 * 35);
+    return () => clearInterval(interval);
+  }, [moduleName]);
+
+    try {
+    // caso o modulo não exista
+    if (!baseConfig) {
+      const msg = errorMessages[getRandomInt(errorMessages.length)];
+      return (
+        <h2>
+          {msg} — módulo "{moduleName}" não encontrado.
+        </h2>
+      );
+    }
+
+    console.log("🔁 ModuleWrapper sincronizado:", moduleName);
+
+    return React.cloneElement(children, {
+      moduleConfig: {
+        ...baseConfig,
+        data,
+        syncData: WARPSync, // ✅ injetamos a função no config
+        errorMessages,
+      },
+      setData, // opcional, se quiser manipular manualmente
+      id,
+    });
+  } catch (err) {
+    console.error(`[ModuleWrapper] Erro no render de ${moduleName}:`, err);
+    setRenderError(err);
+    const msg = errorMessages[getRandomInt(errorMessages.length)];
+    return <h2>{msg} — algo deu errado ao carregar o módulo.</h2>;
   }
-
-  /*
-		React.cloneElement pega o componente filho passado (children) e adiciona props nele.
-		No caso, estamos passando moduleConfig como prop.
-		Assim, dentro do ListPage, NewPage ou EditPage você já recebe:
-			props.moduleConfig
-		sem precisar buscar novamente.
-	*/
-	console.log("ModuleWrapper: Renderizando módulo", moduleName, moduleConfig);
-  return React.cloneElement(children, { moduleConfig,id });
 };
 
 export default ModuleWrapper;

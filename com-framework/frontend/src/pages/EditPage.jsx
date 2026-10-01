@@ -2,12 +2,28 @@ import React, { useState } from "react";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import { Link } from "react-router-dom";
 import Form from "../components/Form.jsx";
-import { getItemFromId, getTitleItem } from "../js/utils.js";
-import Loading from "../components/Loading.jsx";
+import Loading from "../components/subcomponents/Loading.jsx";
+import SubMenu from "../components/SubMenu.jsx";
+import { getItemById } from "../js/modulesItensFilterUtils.js";
+import { getNomeItem } from "../js/modulesDataUtils.js";
 import { update } from "../service/apiFunctions.js";
 
 const EditPage = ({ moduleConfig, id }) => {
-  const atualItem = getItemFromId(id, moduleConfig.data);
+  //  moduleConfig e gerado pelo warper que retorna isso
+  //   return React.cloneElement(children, {
+  //     moduleConfig: {
+  //       ...baseConfig,
+  //       data,
+  //       syncData: WARPSync, // ✅ injetamos a função no config
+  //       errorMessages,
+  //     },
+  //     setData, // opcional, se quiser manipular manualmente
+  //     id,
+  //   });
+  // };
+  // moduleConfig.data e o que vem do banco
+  // Retorna um item de um array pelo ID.
+  const atualItem = getItemById(moduleConfig.data, id);
 
   const [initialValues] = useState(atualItem || {});
   const [loading, setLoading] = useState(false);
@@ -26,35 +42,32 @@ const EditPage = ({ moduleConfig, id }) => {
 
   const handleConfirm = async () => {
     try {
-      const title =getTitleItem(formData)
       setLoading(true);
       setShowModal(false);
 
-      window.addAlert(`✏️ Atualizando ${title}...`, "info");
-      window.addAlert("📡 Enviando dados ao servidor...", "info");
-
       await update(moduleConfig.name, id, formData);
-
-      window.addAlert(`✅ ${title} atualizado com sucesso!`, "success");
       console.log("[EditPage] Item atualizado com sucesso!");
-    } catch (err) {
-      window.addAlert(`❌ Falha ao atualizar! ${err}`, "danger");
-      console.error("[EditPage] Erro ao salvar item:", err);
-    } finally {
-      window.addAlert("🏁 Processo finalizado", "success");
-      setLoading(false);
+    }finally {
+      await moduleConfig.syncData();
+        setLoading(false);
     }
   };
 
+  // Links do submenu
+  const submenuLinks = [
+    { path: `/${moduleConfig.name}`, label: "Listagem" },
+    { path: `/${moduleConfig.name}/novo`, label: "Novo" },
+    {
+      path: `/${moduleConfig.name}/editar/${id}`,
+      label: `Uau! Editando ${getNomeItem(atualItem)}! `,
+    },
+    // Você pode adicionar mais links específicos do módulo aqui
+  ];
   return (
     <div className="container flex flex-column align-items-center">
       <h2>Editar {moduleConfig.label}</h2>
-      <Link
-        to={`/${moduleConfig.name}/novo`}
-        style={{ display: "inline-block", marginBottom: "20px" }}
-      >
-        + Inserir novos {moduleConfig.label}
-      </Link>
+      {/* Submenu horizontal */}
+      <SubMenu links={submenuLinks} />
 
       <Form
         btnTextContent="Editar"
@@ -66,9 +79,9 @@ const EditPage = ({ moduleConfig, id }) => {
       <ConfirmModal
         show={showModal}
         title="Confirmação"
-        message={`Deseja realmente editar ${getTitleItem(
+        message={`Deseja realmente editar ${getNomeItem(
           atualItem
-        )} para ${getTitleItem(formData)}?`}
+        )} para ${getNomeItem(formData)}?`}
         onConfirm={handleConfirm}
         onCancel={() => setShowModal(false)}
       />
